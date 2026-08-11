@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.riptide.rounded.autopatch</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>__PATCHER_EXECUTABLE__</string>
+  </array>
+
+  <key>AssociatedBundleIdentifiers</key>
+  <array>
+    <string>com.riptide.rounded.patcher</string>
+  </array>
+
+  <!-- Re-patch at login and whenever the app bundle changes (e.g. after an
+       auto-update overwrites our LSEnvironment / signature). -->
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>WatchPaths</key>
+  <array>
+    <string>/Applications/HumanLayer.app/Contents/Info.plist</string>
+    <string>/Applications/HumanLayer.app/Contents/MacOS/HumanLayer-Local</string>
+  </array>
+
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
+
+  <key>StandardOutPath</key>
+  <string>/tmp/riptide-rounded-autopatch.log</string>
+  <key>StandardErrorPath</key>
+  <string>/tmp/riptide-rounded-autopatch.log</string>
+</dict>
+</plist>

@@ -1,0 +1,13 @@
+.DS_Store
+build/
+*.dSYM/
+scripts/private-replacements.tsv
+
+# Older browser-extension and copied-app prototypes. The native patcher does not use them.
+inject-font.js
+inject.js
+install-sw.js
+launch-riptide-rounded.sh
+manifest.json
+prepare-local-riptide-app.sh
+user-style.css

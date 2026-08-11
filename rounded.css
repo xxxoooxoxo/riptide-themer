@@ -1,0 +1,1245 @@
+/*
+ * Riptide Rounded — softens the Riptide UI
+ * Targets: app.humanlayer.com and the HumanLayer desktop app
+ */
+
+/* ===== 1. TYPOGRAPHY — Sans-serif for content, mono only for code ===== */
+
+/* Prefer Inter when installed, then fall back to the system sans-serif stack. */
+body,
+.Conversation-Card {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Keep monospace ONLY where it belongs: code, pre, terminal output, input commands */
+pre,
+pre *,
+code,
+code *,
+kbd,
+samp,
+[class*="terminal"] {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* The app marks the whole conversation as mono; keep prose sans and let code opt back in. */
+.Conversation-Card.font-mono {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Breadcrumb path should stay mono */
+nav[aria-label="breadcrumb"],
+nav[aria-label="breadcrumb"] * {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Bottom status bar stays mono */
+div[class*="uppercase"][class*="tracking-wider"],
+div[class*="uppercase"][class*="tracking-wider"] * {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Model selector, context counter stay mono */
+div[class*="OPUS"],
+div[class*="OPUS"] *,
+[data-session-composer="true"] button[class*="font-mono"],
+[data-session-composer="true"] div[class*="font-mono"][class*="text-xs"] {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Sidebar artifact filenames stay mono */
+[data-testid="sidebar"] div[role="tabpanel"] button {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+}
+
+/* Bump assistant message text slightly for readability */
+body :is(p, li, blockquote) {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+[data-conversation-container="true"] .group[data-event-id] span[class*="text-sm"],
+[data-conversation-container="true"] .group[data-event-id] p {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Conversation containers carry font-mono high in the tree. Override the
+ * readable prose nodes directly; code/pre descendants still opt back into mono. */
+[data-conversation-container="true"] .group[data-event-id] :is(p, li, h1, h2, h3, h4, blockquote),
+[data-conversation-container="true"] .group[data-event-id] span[class*="text-sm"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+
+/* ===== USER MESSAGE STYLING ===== */
+
+/* User messages — a compact, distinct well within the conversation only */
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-user"]),
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-circle-user"]) {
+  margin: 3px 0 !important;
+  padding: 10px 12px !important;
+  border-left-color: rgba(136, 192, 208, 0.72) !important;
+  border-radius: 9px !important;
+  background: rgba(136, 192, 208, 0.07) !important;
+}
+
+/* User message text */
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-user"]) span[class*="text-sm"],
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-circle-user"]) span[class*="text-sm"] {
+  font-weight: 500 !important;
+  font-size: 14px !important;
+}
+
+/* User message hover */
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-user"]):hover,
+[data-conversation-container="true"] .group[data-event-id]:has(svg[class*="lucide-circle-user"]):hover {
+  background: rgba(136, 192, 208, 0.1) !important;
+}
+
+
+/* ===== HOVER & ACTIVE STATES ===== */
+
+/* Active/selected message — soft glow instead of hard left border */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"]:not([class*="border-l-transparent"]),
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"][style*="border-left-color"] {
+  border-left-color: rgba(173, 215, 255, 0.5) !important;
+  background: rgba(173, 215, 255, 0.04) !important;
+}
+
+/* Hover state — subtle background lift */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"]:hover {
+  background: rgba(108, 112, 134, 0.06) !important;
+}
+
+/* Active + hover — slightly stronger */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"]:not([class*="border-l-transparent"]):hover {
+  background: rgba(173, 215, 255, 0.07) !important;
+}
+
+/* Timestamps — hide by default, fade in on hover */
+[data-conversation-container="true"] .group[data-event-id] span[class*="text-muted-foreground"]:last-child {
+  transition: opacity 0.2s ease !important;
+}
+
+/* Copy/action buttons — smooth fade in on hover */
+[data-conversation-container="true"] .group[data-event-id] button[class*="opacity"] {
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+}
+
+[data-conversation-container="true"] .group[data-event-id]:hover button[class*="opacity"] {
+  opacity: 0.5 !important;
+}
+
+[data-conversation-container="true"] .group[data-event-id] button[class*="opacity"]:hover {
+  opacity: 1 !important;
+}
+
+
+/* ===== 2. MESSAGE DIVIDERS — Whitespace instead of hard borders ===== */
+
+/* Remove the hard border-bottom between messages */
+[data-conversation-container="true"] .group[data-event-id][class*="border-b"] {
+  border-bottom: none !important;
+  margin-bottom: 2px !important;
+}
+
+/* Add subtle spacing gap between message groups */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"] {
+  padding: 12px 14px !important;
+  border-bottom: none !important;
+  position: relative;
+}
+
+/* Subtle separator line — much softer than a full border */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"] + .group[data-event-id][class*="border-l-2"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(108, 112, 134, 0.12) 20%,
+    rgba(108, 112, 134, 0.12) 80%,
+    transparent
+  );
+}
+
+/* Also fix the last:border-b-0 items */
+[data-conversation-container="true"] div[class*="border-b"][class*="last:border-b-0"] {
+  border-bottom: none !important;
+}
+
+
+/* ===== 3. TOOL RESULT BLOCKS — Softer, less dense ===== */
+
+/* Tool result command lines (pre blocks inside tool results) */
+[data-conversation-container="true"] pre[class*="terminal-bg-alt"] {
+  border: none !important;
+  border-radius: 10px !important;
+  background: rgba(49, 50, 68, 0.6) !important;
+  padding: 8px 12px !important;
+  box-shadow: none !important;
+  margin-top: 6px !important;
+}
+
+/* Tool output / collapsed result text */
+[data-conversation-container="true"] pre + div,
+[data-conversation-container="true"] div[class*="mt-1"] > pre ~ * {
+  border-radius: 8px !important;
+}
+
+/* The expand/collapse chevron area for tool results */
+[data-conversation-container="true"] div[class*="flex-1"] > div[class*="mt-1"] {
+  margin-top: 8px !important;
+}
+
+/* Tool result output lines — the ⎿ prefix blocks */
+[data-conversation-container="true"] .group[data-event-id] span[class*="text-muted-foreground"][class*="text-sm"] {
+  opacity: 0.7 !important;
+}
+
+/* Tool result buttons — give them a subtle card treatment */
+[data-conversation-container="true"] button[class*="transition-colors"][class*="border"] {
+  border-color: transparent !important;
+  background: rgba(49, 50, 68, 0.25) !important;
+  border-radius: 10px !important;
+  margin-bottom: 2px !important;
+}
+
+[data-conversation-container="true"] button[class*="transition-colors"][class*="border"]:hover {
+  background: rgba(49, 50, 68, 0.45) !important;
+}
+
+/* Tool name labels (Bash, Read, Write, Grep) — make them pop as badges */
+[data-conversation-container="true"] .group[data-event-id] span[class*="font-semibold"] {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+  font-size: 12px !important;
+  letter-spacing: 0.03em !important;
+}
+
+
+/* ===== ROUNDING (existing) ===== */
+
+/* Main Conversation Card — remove the outer card chrome */
+.Conversation-Card {
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Sidebar Panel */
+div[class*="bg-card"][class*="border-border"][class*="font-mono"][class*="flex-col"][class*="h-full"] {
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+/* Code Blocks */
+pre {
+  border-radius: 10px !important;
+}
+
+code {
+  border-radius: 6px !important;
+}
+
+/* Session composer */
+[data-session-composer="true"] {
+  border-radius: 12px !important;
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+/* Editable Tiptap / ProseMirror input */
+[data-session-composer="true"] .tiptap.ProseMirror[contenteditable="true"] {
+  border-radius: 8px !important;
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-feature-settings: 'liga' 0 !important;
+}
+
+[data-session-composer="true"] .tiptap.ProseMirror[contenteditable="true"] * {
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+  font-feature-settings: 'liga' 0 !important;
+}
+
+/* Tab Lists */
+div[role="tablist"] {
+  border-radius: 10px !important;
+}
+
+/* Main navigation tabs use an underline. Keep the lower edge square so the
+ * active border stays straight instead of curling into a U shape. */
+button[role="tab"] {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+/* Sidebar tabs use a filled selected state rather than a bottom underline. */
+[data-testid="sidebar"] button[role="tab"] {
+  border-radius: 7px !important;
+}
+
+/* Inline conversation buttons can be softened, but do not override every
+ * deliberately square tab/toggle in the app. */
+[data-conversation-container="true"] button[class*="rounded-none"] {
+  border-radius: 10px !important;
+}
+
+/* Breadcrumb */
+nav[aria-label="breadcrumb"] {
+  padding-top: 10px !important;
+}
+
+nav[aria-label="breadcrumb"] span[class*="rounded"],
+nav[aria-label="breadcrumb"] a[class*="rounded"] {
+  border-radius: 8px !important;
+}
+
+/* Resizable Handle */
+div[data-slot="resizable-handle"] {
+  border-radius: 4px !important;
+}
+
+/* Artifact List Items */
+[data-testid="sidebar"] div[role="tabpanel"] button {
+  border-radius: 8px !important;
+}
+
+/* Status Badges / Pills */
+div[class*="cursor-pointer"][class*="transition-all"][class*="z-10"] {
+  border-radius: 12px !important;
+}
+
+/* Model selector and context counter */
+div[class*="OPUS"],
+div[class*="cursor-pointer"][class*="onclick"] {
+  border-radius: 8px !important;
+}
+
+/* Collapsed/Expandable Agent Blocks */
+button[aria-expanded] {
+  border-radius: 10px !important;
+}
+
+/* Context Window Warning Banner */
+div[class*="bg-destructive"],
+div[class*="bg-warning"] {
+  border-radius: 8px !important;
+}
+
+/* Kanban / task cards — theme-agnostic (inline style sets border-radius: 0px) */
+[data-kanban-task-id] {
+  min-width: 0 !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.025) !important;
+  background-clip: padding-box !important;
+  box-shadow: none !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  transition: none !important;
+}
+
+[data-kanban-task-id][class*="border-l-[var(--terminal-accent)]"] {
+  border-left-color: rgba(136, 192, 208, 0.62) !important;
+  background: rgba(136, 192, 208, 0.045) !important;
+}
+
+[data-kanban-task-id]:hover {
+  background: rgba(255, 255, 255, 0.045) !important;
+}
+
+[data-kanban-task-id] > .flex.flex-col {
+  gap: 6px !important;
+}
+
+[data-kanban-task-id] span[class*="line-clamp"] {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  letter-spacing: 0 !important;
+}
+
+[data-kanban-task-id] img {
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 999px !important;
+  outline: 1px solid rgba(255, 255, 255, 0.1) !important;
+  outline-offset: -1px !important;
+}
+
+[data-kanban-task-id] [data-slot="badge"] {
+  padding: 1px 6px !important;
+  border-color: color-mix(in srgb, currentColor 18%, transparent) !important;
+  border-radius: 5px !important;
+}
+
+[data-kanban-task-id] [data-slot="tooltip-trigger"] {
+  opacity: 0.68 !important;
+}
+
+[data-kanban-task-id] div.inline-grid.aspect-square {
+  width: 12px !important;
+  opacity: 0.55 !important;
+}
+
+/* Compact switches — quiet track, clear circular thumb. */
+html[data-theme] button[role="switch"] {
+  border: 1px solid rgba(134, 150, 178, 0.22) !important;
+  border-radius: 999px !important;
+  background: rgba(117, 129, 151, 0.16) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] button[role="switch"][data-state="checked"] {
+  border-color: rgba(136, 192, 208, 0.36) !important;
+  background: rgba(136, 192, 208, 0.28) !important;
+}
+
+html[data-theme] button[role="switch"] [data-slot="switch-thumb"] {
+  border-radius: 999px !important;
+  background: #9aa7bd !important;
+  box-shadow: none !important;
+}
+
+html[data-theme] button[role="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+  background: #d8dee9 !important;
+}
+
+
+/* ===== 4. SESSION COMPOSER ===== */
+
+/* Keep the composer in the layout instead of overlapping the conversation. */
+[data-session-composer="true"] {
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border: 1px solid rgba(108, 112, 134, 0.28) !important;
+  background: rgba(34, 34, 40, 0.94) !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+[data-session-composer="true"]:focus-within {
+  border-color: rgba(108, 112, 134, 0.5) !important;
+}
+
+/* Composer layout wrapper */
+div[class*="shrink-0"][class*="pt-4"]:has(> [data-session-composer="true"]) {
+  padding: 8px 12px 10px !important;
+  margin-top: 0 !important;
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+/* Keep the newest events fully legible above the composer. */
+.Conversation-Card [data-slot="card-content"] {
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
+}
+
+/* The ProseMirror input itself */
+[data-session-composer="true"] .tiptap.ProseMirror[contenteditable="true"] {
+  min-height: 40px !important;
+  padding: 9px 12px !important;
+}
+
+
+/* ===== 5. MORE WHITESPACE BETWEEN MESSAGES ===== */
+
+/* Give message groups consistent, compact spacing. */
+[data-conversation-container="true"] .group[data-event-id][class*="border-l-2"] {
+  padding: 12px 14px !important;
+}
+
+
+/* ===== 6. INLINE CODE STYLING ===== */
+
+/* Make inline code more distinct like Codex */
+code:not(pre code) {
+  background: rgba(108, 112, 134, 0.2) !important;
+  padding: 2px 7px !important;
+  border-radius: 6px !important;
+  font-size: 0.9em !important;
+  font-family: ui-monospace, 'IBM Plex Mono', SFMono-Regular, Menlo, monospace !important;
+  border: 1px solid rgba(108, 112, 134, 0.15) !important;
+}
+
+
+/* ===== 7. BOTTOM KEYBOARD SHORTCUTS BAR — Fade it ===== */
+
+/* The keyboard shortcuts bar at the very bottom */
+div[class*="font-mono"][class*="uppercase"][class*="tracking-wider"][class*="border-t"] {
+  opacity: 0.35 !important;
+  transition: opacity 0.3s ease !important;
+  font-size: 10px !important;
+  padding: 4px 8px !important;
+}
+
+div[class*="font-mono"][class*="uppercase"][class*="tracking-wider"][class*="border-t"]:hover {
+  opacity: 0.8 !important;
+}
+
+
+/* ===== 8. WARMER COLOR TEMPERATURE ===== */
+
+/* Shift the base background from cool blue (#1b1e28) toward warmer dark */
+body {
+  background-color: #1e1e24 !important;
+}
+
+/* Warm up the card backgrounds — card is borderless now, keep transparent */
+
+/* Warm up terminal/code block backgrounds */
+:root {
+  --terminal-bg: #1e1e24 !important;
+  --terminal-bg-alt: #2a2a32 !important;
+  --terminal-border: #333340 !important;
+}
+
+
+/* ===== SCROLLBAR ===== */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(108, 112, 134, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(108, 112, 134, 0.5);
+}
+
+
+/* ===== DROPDOWNS / POPOVERS ===== */
+
+div[data-radix-popper-content-wrapper] > div,
+div[role="menu"],
+div[role="dialog"],
+div[role="listbox"] {
+  border-radius: 12px !important;
+  overflow: hidden;
+}
+
+div[role="tooltip"] {
+  border-radius: 8px !important;
+}
+
+
+/* ===== 9. CURRENT RIPTIDE APP COHESION ===== */
+
+html[data-theme="nord-vscode"],
+:root {
+  --rr-bg: #151820;
+  --rr-bg-elevated: #1a1f29;
+  --rr-surface-1: #1d2430;
+  --rr-surface-2: #222a36;
+  --rr-surface-3: #2a3342;
+  --rr-border: rgba(134, 150, 178, 0.22);
+  --rr-border-strong: rgba(134, 150, 178, 0.34);
+  --rr-text: #d8dee9;
+  --rr-text-muted: #9aa7bd;
+  --rr-text-faint: #758197;
+  --rr-cyan: #88c0d0;
+  --rr-blue: #81a1c1;
+  --rr-green: #a3be8c;
+  --rr-yellow: #ebcb8b;
+  --rr-red: #bf616a;
+  --rr-shadow: 0 12px 32px rgba(0, 0, 0, 0.24);
+  --terminal-bg: var(--rr-bg) !important;
+  --terminal-bg-alt: var(--rr-surface-2) !important;
+  --terminal-border: var(--rr-border) !important;
+  --terminal-accent: var(--rr-cyan) !important;
+}
+
+html[data-theme="nord-vscode"],
+html[data-theme="nord-vscode"] body,
+html[data-theme="nord-vscode"] #app {
+  background: var(--rr-bg) !important;
+  color: var(--rr-text) !important;
+}
+
+html[data-theme="nord-vscode"] .bg-background {
+  background-color: var(--rr-bg) !important;
+}
+
+html[data-theme="nord-vscode"] .bg-card,
+html[data-theme="nord-vscode"] .bg-sidebar,
+html[data-theme="nord-vscode"] .bg-secondary {
+  background-color: var(--rr-surface-1) !important;
+}
+
+html[data-theme="nord-vscode"] .text-foreground,
+html[data-theme="nord-vscode"] .text-card-foreground,
+html[data-theme="nord-vscode"] .text-sidebar-foreground {
+  color: var(--rr-text) !important;
+}
+
+html[data-theme="nord-vscode"] .text-muted-foreground,
+html[data-theme="nord-vscode"] .text-sidebar-foreground\/70 {
+  color: var(--rr-text-muted) !important;
+}
+
+html[data-theme="nord-vscode"] .border-border,
+html[data-theme="nord-vscode"] .border-sidebar-border {
+  border-color: var(--rr-border) !important;
+}
+
+html[data-theme="nord-vscode"] .text-accent,
+html[data-theme="nord-vscode"] [class*="text-[var(--terminal-accent)]"] {
+  color: var(--rr-cyan) !important;
+}
+
+html[data-theme="nord-vscode"] [data-slot="resizable-handle"] {
+  transition: background 0.16s ease, opacity 0.16s ease !important;
+}
+
+html[data-theme="nord-vscode"] [data-slot="resizable-handle"] > div {
+  width: 3px !important;
+  border-radius: 999px !important;
+  background: var(--rr-border-strong) !important;
+  opacity: 0.7 !important;
+}
+
+html[data-theme="nord-vscode"] [data-slot="resizable-handle"]:hover > div {
+  background: var(--rr-cyan) !important;
+  opacity: 0.9 !important;
+}
+
+/* Sidebar */
+html[data-theme="nord-vscode"] [data-testid="task-tree-sidebar"] .bg-sidebar {
+  background: linear-gradient(180deg, #171b24 0%, #151922 100%) !important;
+  border-right-color: var(--rr-border) !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="task-tree-sidebar"] .h-12 {
+  background: rgba(34, 42, 54, 0.72) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+html[data-theme="nord-vscode"] [data-sidebar-task-id],
+html[data-theme="nord-vscode"] [data-sidebar-session-id] {
+  border-radius: 8px 0 0 8px !important;
+  margin-block: 1px !important;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease !important;
+}
+
+html[data-theme="nord-vscode"] [data-sidebar-task-id]:hover,
+html[data-theme="nord-vscode"] [data-sidebar-session-id]:hover {
+  background: rgba(136, 192, 208, 0.08) !important;
+}
+
+html[data-theme="nord-vscode"] [data-sidebar-session-id][data-active="true"],
+html[data-theme="nord-vscode"] [data-sidebar-task-id][data-active="true"] {
+  background: rgba(136, 192, 208, 0.12) !important;
+  border-right-color: var(--rr-cyan) !important;
+  color: var(--rr-text) !important;
+}
+
+[data-testid="task-tree-sidebar"] [data-slot="badge"] {
+  min-width: 18px !important;
+  border-radius: 999px !important;
+}
+
+[data-focus-area="LEFT_NAV"] [data-slot="badge"] {
+  min-width: 18px !important;
+  border-radius: 999px !important;
+}
+
+[data-focus-area="LEFT_NAV"] a[href*="/settings/"] > :last-child {
+  border-radius: 999px !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="task-tree-sidebar"] [data-slot="badge"] {
+  border-color: rgba(235, 203, 139, 0.36) !important;
+  background: rgba(235, 203, 139, 0.1) !important;
+  color: var(--rr-yellow) !important;
+}
+
+/* Breadcrumb and top controls */
+html[data-theme="nord-vscode"] nav[aria-label="breadcrumb"] {
+  padding: 10px 16px 8px 0 !important;
+  color: var(--rr-text-muted) !important;
+}
+
+html[data-theme="nord-vscode"] nav[aria-label="breadcrumb"] a,
+html[data-theme="nord-vscode"] nav[aria-label="breadcrumb"] [data-slot="breadcrumb-page"] {
+  border-radius: 8px !important;
+}
+
+html[data-theme="nord-vscode"] nav[aria-label="breadcrumb"] a:hover {
+  background: rgba(136, 192, 208, 0.09) !important;
+  color: var(--rr-text) !important;
+}
+
+/* Conversation shell */
+html[data-theme="nord-vscode"] .Conversation-Card {
+  overflow: hidden !important;
+  border: 1px solid var(--rr-border) !important;
+  border-radius: 12px !important;
+  background: var(--rr-surface-1) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="nord-vscode"] .Conversation-Card > .shrink-0 {
+  border-bottom-color: var(--rr-border) !important;
+  background: rgba(26, 31, 41, 0.82) !important;
+  backdrop-filter: blur(14px) !important;
+}
+
+html[data-theme="nord-vscode"] .Conversation-Card [data-slot="card-content"] {
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] {
+  padding: 8px 10px 10px !important;
+  scrollbar-gutter: stable !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id] {
+  margin: 3px 0 !important;
+  padding: 12px 14px !important;
+  border-bottom: 0 !important;
+  border-radius: 10px !important;
+  border-left-width: 2px !important;
+  background: transparent !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]::before {
+  display: none !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:hover {
+  background: rgba(136, 192, 208, 0.05) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-brain) {
+  background: rgba(129, 161, 193, 0.045) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-terminal),
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-file-text),
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-file-pen) {
+  background: rgba(42, 51, 66, 0.58) !important;
+  border-left-color: rgba(136, 192, 208, 0.45) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-bot) {
+  background: rgba(163, 190, 140, 0.045) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-user),
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id]:has(.lucide-circle-user) {
+  background: rgba(136, 192, 208, 0.11) !important;
+  border-left-color: var(--rr-cyan) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id][class*="bg-accent"],
+html[data-theme="nord-vscode"] [data-conversation-container="true"] .group[data-event-id][class*="border-l-[var(--terminal-accent)]"] {
+  background: rgba(136, 192, 208, 0.1) !important;
+  border-left-color: var(--rr-cyan) !important;
+}
+
+html[data-theme="nord-vscode"] .prose-terminal {
+  color: var(--rr-text) !important;
+}
+
+html[data-theme="nord-vscode"] .prose-terminal p,
+html[data-theme="nord-vscode"] .prose-terminal li {
+  line-height: 1.58 !important;
+}
+
+html[data-theme="nord-vscode"] .prose-terminal h3 {
+  margin: 12px 0 8px !important;
+  color: var(--rr-cyan) !important;
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  line-height: 1.3 !important;
+}
+
+html[data-theme="nord-vscode"] .prose-terminal a {
+  color: var(--rr-cyan) !important;
+  text-decoration-color: rgba(136, 192, 208, 0.42) !important;
+}
+
+html[data-theme="nord-vscode"] [data-conversation-container="true"] pre {
+  border: 1px solid var(--rr-border) !important;
+  border-radius: 9px !important;
+  background: var(--rr-surface-2) !important;
+  color: var(--rr-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025) !important;
+}
+
+html[data-theme="nord-vscode"] code:not(pre code) {
+  border: 1px solid rgba(136, 192, 208, 0.2) !important;
+  border-radius: 6px !important;
+  background: rgba(136, 192, 208, 0.1) !important;
+  color: #c6d6e5 !important;
+}
+
+/* Composer */
+html[data-theme="nord-vscode"] div[class*="shrink-0"][class*="pt-4"]:has(.tiptap.ProseMirror) {
+  z-index: 6 !important;
+  margin-top: 0 !important;
+  padding: 8px 12px 10px !important;
+  background: transparent !important;
+}
+
+html[data-theme="nord-vscode"] div[class~="border"][class~="rounded-lg"][class~="relative"]:has(.tiptap.ProseMirror) {
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  border: 1px solid var(--rr-border-strong) !important;
+  border-radius: 12px !important;
+  background: rgba(34, 42, 54, 0.96) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap.ProseMirror {
+  min-height: 40px !important;
+  border-radius: 8px !important;
+  background: rgba(15, 18, 24, 0.38) !important;
+  color: var(--rr-text) !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap.ProseMirror:focus {
+  box-shadow: inset 0 0 0 1px rgba(136, 192, 208, 0.22) !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap.ProseMirror p[data-placeholder]::before {
+  color: var(--rr-text-faint) !important;
+}
+
+/* Rendered artifact prose */
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] {
+  width: min(100%, 84ch) !important;
+  min-height: auto !important;
+  margin: 0 auto !important;
+  padding: 32px 40px 44px !important;
+  border: 1px solid var(--rr-border) !important;
+  border-radius: 14px !important;
+  background: rgba(26, 31, 41, 0.72) !important;
+  color: var(--rr-text) !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.18) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  line-height: 1.76 !important;
+  letter-spacing: 0 !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] > * {
+  max-width: 72ch !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] > * + * {
+  margin-top: 1.05em !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] p {
+  margin: 0 !important;
+  color: rgba(216, 222, 233, 0.92) !important;
+  font-size: 16px !important;
+  line-height: 1.76 !important;
+  text-wrap: pretty !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] > p:first-child {
+  max-width: none !important;
+  margin: -6px 0 22px !important;
+  padding: 12px 14px !important;
+  border: 1px solid rgba(136, 192, 208, 0.2) !important;
+  border-radius: 10px !important;
+  background: rgba(136, 192, 208, 0.075) !important;
+  color: var(--rr-text-muted) !important;
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+  white-space: pre-line !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h1,
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h2,
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h3,
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h4 {
+  margin: 2em 0 0.65em !important;
+  color: #edf3fb !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+  text-wrap: balance !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h2 {
+  padding-top: 1.2em !important;
+  border-top: 1px solid var(--rr-border) !important;
+  color: #dce9f5 !important;
+  font-size: 22px !important;
+  line-height: 1.28 !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h2:first-of-type {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] h3 {
+  font-size: 18px !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] ul,
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] ol {
+  margin: 1em 0 1.2em !important;
+  padding-left: 1.45rem !important;
+  color: rgba(216, 222, 233, 0.92) !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] li {
+  margin: 0.48em 0 !important;
+  padding-left: 0.2rem !important;
+  line-height: 1.74 !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] li > p {
+  display: inline !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] li > p + ul,
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] li > p + ol {
+  margin-top: 0.6em !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] strong {
+  color: #edf3fb !important;
+  font-weight: 650 !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] a {
+  color: var(--rr-cyan) !important;
+  text-decoration: underline !important;
+  text-decoration-color: rgba(136, 192, 208, 0.42) !important;
+  text-underline-offset: 3px !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] a:hover {
+  color: #a7d4df !important;
+  text-decoration-color: rgba(167, 212, 223, 0.68) !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] code:not(pre code) {
+  padding: 0.12em 0.36em !important;
+  border: 1px solid rgba(136, 192, 208, 0.2) !important;
+  border-radius: 6px !important;
+  background: rgba(136, 192, 208, 0.1) !important;
+  color: #c9d8e8 !important;
+  font-size: 0.88em !important;
+}
+
+html[data-theme="nord-vscode"] .tiptap-comment-wrapper .tiptap.ProseMirror[contenteditable="false"] blockquote {
+  margin: 1.4em 0 !important;
+  padding: 0.8em 1em !important;
+  border-left: 3px solid rgba(136, 192, 208, 0.56) !important;
+  border-radius: 0 10px 10px 0 !important;
+  background: rgba(136, 192, 208, 0.07) !important;
+  color: var(--rr-text-muted) !important;
+}
+
+/* Right artifact panel */
+html[data-theme="nord-vscode"] [data-testid="sidebar"] [data-slot="card"] {
+  border-color: var(--rr-border) !important;
+  border-radius: 12px 0 0 12px !important;
+  background: var(--rr-surface-1) !important;
+  box-shadow: var(--rr-shadow) !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] [role="tablist"] {
+  gap: 3px !important;
+  border: 1px solid var(--rr-border) !important;
+  border-radius: 10px !important;
+  background: rgba(15, 18, 24, 0.42) !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] button[role="tab"] {
+  height: 30px !important;
+  border-radius: 7px !important;
+  color: var(--rr-text-muted) !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] button[role="tab"][data-state="active"] {
+  background: rgba(136, 192, 208, 0.12) !important;
+  color: var(--rr-text) !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] section h3 {
+  color: var(--rr-text-faint) !important;
+  letter-spacing: 0.06em !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] [role="tabpanel"] button {
+  border-radius: 9px !important;
+  background: rgba(42, 51, 66, 0.45) !important;
+}
+
+html[data-theme="nord-vscode"] [data-testid="sidebar"] [role="tabpanel"] button:hover {
+  background: rgba(136, 192, 208, 0.1) !important;
+}
+
+/* Kanban/task cards */
+html[data-theme="nord-vscode"] [data-kanban-task-id] {
+  border-radius: 8px !important;
+  outline: none !important;
+  overflow: hidden !important;
+  background-clip: padding-box !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+html[data-theme="nord-vscode"] [data-kanban-task-id]:hover {
+  background: rgba(255, 255, 255, 0.045) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+html[data-theme="nord-vscode"] [data-kanban-task-id] img {
+  border-radius: 999px !important;
+}
+
+/* Claude session terminal */
+html[data-theme="nord-vscode"] .h-full.rounded-lg.border.bg-background.flex.flex-col:has(.lucide-terminal) {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background-clip: padding-box !important;
+}
+
+html[data-theme="nord-vscode"] .h-full.rounded-lg.border.bg-background.flex.flex-col:has(.lucide-terminal) > .border-b {
+  border-radius: 14px 14px 0 0 !important;
+}
+
+html[data-theme="nord-vscode"] .h-full.rounded-lg.border.bg-background.flex.flex-col:has(.lucide-terminal) > .relative {
+  border-radius: 0 0 14px 14px !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="nord-vscode"] .terminal.xterm,
+html[data-theme="nord-vscode"] .terminal.xterm .xterm-scrollable-element,
+html[data-theme="nord-vscode"] .terminal.xterm .xterm-screen,
+html[data-theme="nord-vscode"] .terminal.xterm .xterm-viewport {
+  border-radius: 0 0 14px 14px !important;
+  overflow: hidden !important;
+  background-clip: padding-box !important;
+}
+
+html[data-theme="nord-vscode"] .terminal.xterm canvas,
+html[data-theme="nord-vscode"] canvas.xterm-link-layer {
+  border-radius: 0 0 14px 14px !important;
+  overflow: hidden !important;
+}
+
+html[data-theme="nord-vscode"] .terminal.xterm .xterm-scrollable-element > .scrollbar.vertical {
+  border-radius: 0 0 14px 0 !important;
+  overflow: hidden !important;
+}
+
+/* Controls, badges, switches, footer */
+html[data-theme="nord-vscode"] button[data-slot="button"],
+html[data-theme="nord-vscode"] button[data-slot="dropdown-menu-trigger"],
+html[data-theme="nord-vscode"] button[data-slot="tooltip-trigger"] {
+  border-radius: 8px !important;
+}
+
+html[data-theme="nord-vscode"] button[role="switch"] {
+  border-radius: 999px !important;
+}
+
+html[data-theme="nord-vscode"] button[role="switch"] span {
+  border-radius: 999px !important;
+}
+
+html[data-theme="nord-vscode"] [data-slot="badge"],
+html[data-theme="nord-vscode"] kbd {
+  border-color: var(--rr-border) !important;
+  background: rgba(42, 51, 66, 0.7) !important;
+  color: var(--rr-text-muted) !important;
+}
+
+[data-slot="badge"],
+kbd {
+  border-radius: 6px !important;
+}
+
+/* Custom compact labels do not use shadcn's data-slot="badge" hook. Match
+ * their compact border/padding shape so task steps, metadata, workflow phase,
+ * billing status, and form maturity badges receive the same treatment. */
+:is(span, div)[class~="inline-flex"][class~="border"][class*="text-"][class*="px-"],
+:is(span, div)[class~="border"][class*="text-xs"][class*="px-"][class*="py-"],
+:is(span, button)[class*="font-mono"][class*="border"] {
+  border-radius: 6px !important;
+}
+
+/* Form controls and card primitives were the other large square holdouts. */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select,
+[role="combobox"] {
+  border-radius: 8px !important;
+}
+
+[data-slot="card"]:not([data-testid="sidebar"] [data-slot="card"]),
+fieldset {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Settings and diagnostics use hand-built rounded-md panels rather than the
+ * shared card primitive. Keep this to full bordered block elements so compact
+ * badges retain their smaller radius. */
+:is(div, section)[class~="rounded-md"][class~="border"] {
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+
+a[class~="border"] {
+  border-radius: 8px !important;
+}
+
+/* Shared table scroll shell: clip header/row backgrounds to rounded corners
+ * while retaining the existing horizontal scrolling behavior. */
+div.relative.w-full.overflow-x-auto {
+  border-radius: 10px !important;
+  overflow-x: scroll !important;
+  scrollbar-gutter: stable !important;
+}
+
+div.relative.w-full.overflow-x-auto::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+div.relative.w-full.overflow-x-auto::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.08);
+}
+
+div.relative.w-full.overflow-x-auto::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.38);
+  background-clip: padding-box;
+}
+
+/* The task list's content-sized NAME column used to push CREATED, UPDATED,
+ * and the actions column beyond the standard window. Give the eight-column
+ * grid an explicit, stable allocation while retaining cell truncation. */
+#main [id$="-content-tasks"] table {
+  width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+}
+
+#main [id$="-content-tasks"] thead th:nth-child(1) { width: 3% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(2) { width: 43% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(3) { width: 13% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(4) { width: 15% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(5) { width: 8% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(6) { width: 8% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(7) { width: 8% !important; }
+#main [id$="-content-tasks"] thead th:nth-child(8) { width: 2% !important; }
+
+/* Draft tasks use a plain muted span instead of the shared Badge component.
+ * Give that one semantic step label the same compact badge treatment without
+ * decorating genuinely empty STEP cells. */
+#main :is([id$="-content-tasks"], [id$="-content-drafts"]) tbody td:nth-child(3) > span.text-xs.text-muted-foreground {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: fit-content !important;
+  padding: 2px 8px !important;
+  border: 1px solid color-mix(in srgb, currentColor 50%, transparent) !important;
+  border-radius: 6px !important;
+  background: color-mix(in srgb, currentColor 10%, transparent) !important;
+  font-weight: 500 !important;
+  line-height: 1rem !important;
+  white-space: nowrap !important;
+}
+
+/* MINE omits the user filter entirely. Reserve that missing control's width so
+ * the following GROUPED control does not jump left when the scope changes. */
+#main div[class~="h-[57px]"][class~="items-center"][class~="gap-7"]:not(:has(> [role="combobox"])) > label {
+  margin-left: 180px !important;
+}
+
+/* Command/select suggestions need their own inset rounded highlight. */
+[cmdk-item],
+[data-slot="command-item"],
+[data-slot="select-item"],
+[role="option"] {
+  border-radius: 7px !important;
+}
+
+/* React Flow task nodes and their minimap previews are not card primitives. */
+.react-flow__node,
+.react-flow__node > div {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+
+.react-flow__minimap-node {
+  rx: 4px !important;
+  ry: 4px !important;
+}
+
+html[data-theme="nord-vscode"] footer {
+  min-height: 30px !important;
+  border-top: 1px solid var(--rr-border) !important;
+  background: rgba(21, 24, 32, 0.94) !important;
+  backdrop-filter: blur(16px) !important;
+}
+
+html[data-theme="nord-vscode"] footer #left,
+html[data-theme="nord-vscode"] footer #center,
+html[data-theme="nord-vscode"] footer #right {
+  color: var(--rr-text-muted) !important;
+}
+
+html[data-theme="nord-vscode"] footer a,
+html[data-theme="nord-vscode"] footer button {
+  border-radius: 7px !important;
+}
+
+html[data-theme="nord-vscode"] footer a:hover,
+html[data-theme="nord-vscode"] footer button:hover {
+  background: rgba(136, 192, 208, 0.1) !important;
+}
+
+/* Conversation events use the left border as an activity rail. Keep that rail
+ * perfectly straight while preserving the softer corners on the open side. */
+#main [data-conversation-container="true"] .group[data-event-id] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Every Kanban card reserves a 2px activity rail, including while transparent.
+ * Flatten that side across idle, hover, selected, and syncing transitions. */
+#main [data-kanban-task-id] {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}

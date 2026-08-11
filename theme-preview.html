@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HumanLayer Theme Editor</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --lab-bg: #0f1117;
+        --lab-panel: #171a22;
+        --lab-panel-alt: #1c202a;
+        --lab-border: #2b303d;
+        --lab-border-strong: #3a4252;
+        --lab-text: #e6e9ef;
+        --lab-muted: #939bad;
+        --lab-accent: #88c0d0;
+        --frame-width: 1309px;
+        --frame-height: 818px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--lab-bg);
+        color: var(--lab-text);
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button,
+      select,
+      input[type="color"],
+      input[type="range"],
+      textarea {
+        outline: none;
+      }
+
+      button:focus-visible,
+      select:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        box-shadow: 0 0 0 3px rgb(136 192 208 / 22%);
+        border-color: var(--lab-accent);
+      }
+
+      .lab {
+        display: grid;
+        grid-template-rows: 62px minmax(0, 1fr);
+        width: 100%;
+        height: 100%;
+      }
+
+      .lab-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 0 20px;
+        border-bottom: 1px solid var(--lab-border);
+        background: var(--lab-panel);
+      }
+
+      .lab-heading {
+        min-width: 0;
+      }
+
+      .lab-heading h1 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .lab-heading p {
+        margin: 4px 0 0;
+        color: var(--lab-muted);
+        font-size: 12px;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        flex: none;
+        gap: 8px;
+        min-height: 30px;
+        padding: 0 10px;
+        border: 1px solid var(--lab-border);
+        border-radius: 8px;
+        color: var(--lab-muted);
+        background: var(--lab-panel-alt);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        font-size: 11px;
+      }
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #a3be8c;
+        box-shadow: 0 0 0 3px rgb(163 190 140 / 12%);
+      }
+
+      .lab-body {
+        display: grid;
+        grid-template-columns: 292px minmax(0, 1fr);
+        min-height: 0;
+      }
+
+      .controls {
+        min-height: 0;
+        overflow-y: auto;
+        border-right: 1px solid var(--lab-border);
+        background: var(--lab-panel);
+        scrollbar-color: var(--lab-border-strong) transparent;
+      }
+
+      .controls-inner {
+        display: grid;
+        gap: 20px;
+        padding: 18px;
+      }
+
+      .control-section {
+        display: grid;
+        gap: 11px;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        color: var(--lab-muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .section-heading output {
+        color: var(--lab-muted);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        font-size: 10px;
+      }
+
+      .mode-switch,
+      .viewport-switch {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+        padding: 4px;
+        border: 1px solid var(--lab-border);
+        border-radius: 10px;
+        background: var(--lab-bg);
+      }
+
+      .viewport-switch {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .segmented-button,
+      .lab-button {
+        min-height: 32px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        color: var(--lab-muted);
+        background: transparent;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .segmented-button:hover,
+      .lab-button:hover {
+        color: var(--lab-text);
+        background: var(--lab-panel-alt);
+      }
+
+      .segmented-button[aria-pressed="true"] {
+        border-color: var(--lab-border-strong);
+        color: var(--lab-text);
+        background: var(--lab-panel-alt);
+      }
+
+      .mode-switch .segmented-button[aria-pressed="true"] {
+        border-color: rgb(136 192 208 / 45%);
+        color: #b7dce5;
+        background: rgb(136 192 208 / 10%);
+      }
+
+      .palette {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .color-control {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr);
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        padding: 7px;
+        border: 1px solid var(--lab-border);
+        border-radius: 8px;
+        background: var(--lab-panel-alt);
+      }
+
+      .color-control input {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .color-control input::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      .color-control input::-webkit-color-swatch {
+        border: 0;
+        border-radius: 6px;
+      }
+
+      .color-control span {
+        overflow: hidden;
+        color: var(--lab-muted);
+        font-size: 11px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .field-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        color: var(--lab-muted);
+        font-size: 11px;
+      }
+
+      .field select,
+      .field textarea {
+        width: 100%;
+        border: 1px solid var(--lab-border);
+        border-radius: 8px;
+        color: var(--lab-text);
+        background: var(--lab-bg);
+      }
+
+      .field select {
+        height: 34px;
+        padding: 0 9px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .field textarea {
+        min-height: 112px;
+        resize: vertical;
+        padding: 9px 10px;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      input[type="range"] {
+        width: 100%;
+        accent-color: var(--lab-accent);
+        cursor: pointer;
+      }
+
+      .button-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .lab-button {
+        border-color: var(--lab-border);
+        background: var(--lab-panel-alt);
+      }
+
+      .lab-button.primary {
+        border-color: rgb(136 192 208 / 45%);
+        color: #b7dce5;
+        background: rgb(136 192 208 / 10%);
+      }
+
+      .note {
+        margin: 0;
+        color: var(--lab-muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+
+      .preview {
+        display: grid;
+        grid-template-rows: 48px minmax(0, 1fr);
+        min-width: 0;
+        min-height: 0;
+        background: #0b0d12;
+      }
+
+      .preview-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 0 14px;
+        border-bottom: 1px solid var(--lab-border);
+        background: var(--lab-panel);
+      }
+
+      .preview-name {
+        min-width: 0;
+      }
+
+      .preview-name strong {
+        display: block;
+        overflow: hidden;
+        font-size: 12px;
+        font-weight: 650;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .preview-name span {
+        display: block;
+        margin-top: 2px;
+        color: var(--lab-muted);
+        font-size: 10px;
+      }
+
+      .preview-actions {
+        display: flex;
+        align-items: center;
+        flex: none;
+        gap: 8px;
+      }
+
+      .frame-dimensions {
+        color: var(--lab-muted);
+        font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+        font-size: 10px;
+      }
+
+      .preview-scroll {
+        min-width: 0;
+        min-height: 0;
+        overflow: auto;
+        padding: 18px;
+        scrollbar-color: var(--lab-border-strong) transparent;
+      }
+
+      .preview-frame-shell {
+        width: var(--frame-width);
+        height: var(--frame-height);
+        overflow: hidden;
+        border: 1px solid var(--lab-border-strong);
+        border-radius: 10px;
+        background: #111318;
+        box-shadow: 0 18px 44px rgb(0 0 0 / 32%);
+      }
+
+      #reference-frame {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #111318;
+      }
+
+      @media (max-width: 780px) {
+        .lab {
+          grid-template-rows: auto minmax(0, 1fr);
+        }
+
+        .lab-header {
+          align-items: flex-start;
+          padding: 14px;
+        }
+
+        .lab-heading p,
+        .status {
+          display: none;
+        }
+
+        .lab-body {
+          grid-template-columns: 1fr;
+          grid-template-rows: minmax(190px, 42vh) minmax(0, 1fr);
+        }
+
+        .controls {
+          border-right: 0;
+          border-bottom: 1px solid var(--lab-border);
+        }
+
+        .controls-inner {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .preview-toolbar {
+          padding: 0 10px;
+        }
+
+        .frame-dimensions {
+          display: none;
+        }
+      }
+
+      @media (max-width: 520px) {
+        .controls-inner {
+          grid-template-columns: 1fr;
+        }
+
+        .preview-name span {
+          display: none;
+        }
+
+        .preview-scroll {
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lab">
+      <header class="lab-header">
+        <div class="lab-heading">
+          <h1>HumanLayer theme editor</h1>
+          <p>The sanitized production task page is the preview canvas. No hand-built UI is used.</p>
+        </div>
+        <div class="status" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="status-text">Loading reference</span>
+        </div>
+      </header>
+
+      <div class="lab-body">
+        <aside class="controls" aria-label="Theme controls">
+          <div class="controls-inner">
+            <section class="control-section">
+              <div class="section-heading"><h2>Comparison</h2></div>
+              <div class="mode-switch" aria-label="Preview mode">
+                <button class="segmented-button" type="button" aria-pressed="false" data-mode="original">Original</button>
+                <button class="segmented-button" type="button" aria-pressed="true" data-mode="rounded">Rounded</button>
+              </div>
+              <p class="note">Original disables every local layer. Rounded loads the current <code>rounded.css</code>.</p>
+            </section>
+
+            <section class="control-section">
+              <div class="section-heading"><h2>Viewport</h2></div>
+              <div class="viewport-switch" aria-label="Preview viewport">
+                <button class="segmented-button" type="button" aria-pressed="true" data-viewport="desktop">Desktop</button>
+                <button class="segmented-button" type="button" aria-pressed="false" data-viewport="tablet">Tablet</button>
+                <button class="segmented-button" type="button" aria-pressed="false" data-viewport="mobile">Mobile</button>
+              </div>
+            </section>
+
+            <section class="control-section">
+              <div class="section-heading"><h2>Palette</h2></div>
+              <div class="palette">
+                <label class="color-control"><input type="color" value="#151820" data-color="bg" /><span>Background</span></label>
+                <label class="color-control"><input type="color" value="#1d2430" data-color="surface1" /><span>Surface</span></label>
+                <label class="color-control"><input type="color" value="#222a36" data-color="surface2" /><span>Raised</span></label>
+                <label class="color-control"><input type="color" value="#8696b2" data-color="border" /><span>Border</span></label>
+                <label class="color-control"><input type="color" value="#d8dee9" data-color="text" /><span>Text</span></label>
+                <label class="color-control"><input type="color" value="#9aa7bd" data-color="muted" /><span>Muted</span></label>
+                <label class="color-control"><input type="color" value="#88c0d0" data-color="cyan" /><span>Accent</span></label>
+                <label class="color-control"><input type="color" value="#81a1c1" data-color="blue" /><span>Secondary</span></label>
+                <label class="color-control"><input type="color" value="#a3be8c" data-color="green" /><span>Success</span></label>
+                <label class="color-control"><input type="color" value="#ebcb8b" data-color="yellow" /><span>Warning</span></label>
+                <label class="color-control"><input type="color" value="#bf616a" data-color="red" /><span>Error</span></label>
+              </div>
+            </section>
+
+            <section class="control-section">
+              <div class="section-heading"><h2>Shape and type</h2></div>
+              <label class="field">
+                <span class="field-label"><span>Surface radius</span><output id="radius-output">12px</output></span>
+                <input id="radius" type="range" min="0" max="24" step="1" value="12" />
+              </label>
+              <label class="field">
+                <span class="field-label"><span>Content font</span></span>
+                <select id="font-family">
+                  <option value="inter">Inter</option>
+                  <option value="plex">IBM Plex Mono</option>
+                  <option value="system">System sans</option>
+                </select>
+              </label>
+            </section>
+
+            <section class="control-section">
+              <div class="section-heading"><h2>Custom CSS</h2><output id="css-output">Not applied</output></div>
+              <label class="field">
+                <span class="field-label"><span>Overrides after rounded.css</span></span>
+                <textarea id="custom-css" spellcheck="false">/* Example: focus one production selector. */
+#app [data-kanban-task-id] {
+  /* border-radius: 16px !important; */
+}</textarea>
+              </label>
+              <div class="button-row">
+                <button id="apply-css" class="lab-button primary" type="button">Apply CSS</button>
+                <button id="reset-theme" class="lab-button" type="button">Reset</button>
+              </div>
+            </section>
+          </div>
+        </aside>
+
+        <main class="preview">
+          <div class="preview-toolbar">
+            <div class="preview-name">
+              <strong>Sanitized task detail</strong>
+              <span>Production DOM + 752 captured CSS rules</span>
+            </div>
+            <div class="preview-actions">
+              <span id="frame-dimensions" class="frame-dimensions">1309 × 818</span>
+              <button id="reload-css" class="lab-button" type="button">Reload rounded.css</button>
+            </div>
+          </div>
+          <div class="preview-scroll">
+            <div class="preview-frame-shell">
+              <iframe id="reference-frame" title="Sanitized HumanLayer task preview" src="./humanlayer-task-reference.html"></iframe>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const defaults = {
+        bg: "#151820",
+        surface1: "#1d2430",
+        surface2: "#222a36",
+        border: "#8696b2",
+        text: "#d8dee9",
+        muted: "#9aa7bd",
+        cyan: "#88c0d0",
+        blue: "#81a1c1",
+        green: "#a3be8c",
+        yellow: "#ebcb8b",
+        red: "#bf616a",
+        radius: "12",
+        font: "inter",
+      };
+
+      const viewports = {
+        desktop: { width: 1309, height: 818 },
+        tablet: { width: 820, height: 900 },
+        mobile: { width: 420, height: 900 },
+      };
+
+      const frame = document.querySelector("#reference-frame");
+      const statusText = document.querySelector("#status-text");
+      const radiusInput = document.querySelector("#radius");
+      const radiusOutput = document.querySelector("#radius-output");
+      const fontSelect = document.querySelector("#font-family");
+      const customCss = document.querySelector("#custom-css");
+      const cssOutput = document.querySelector("#css-output");
+      const dimensions = document.querySelector("#frame-dimensions");
+      let activeMode = "rounded";
+      let activeViewport = "desktop";
+      let cssRevision = Date.now();
+
+      function frameDocument() {
+        return frame.contentDocument || frame.contentWindow?.document || null;
+      }
+
+      function ensureFrameLayer(tagName, id) {
+        const documentInFrame = frameDocument();
+        if (!documentInFrame) return null;
+
+        let layer = documentInFrame.querySelector(`#${id}`);
+        if (!layer) {
+          layer = documentInFrame.createElement(tagName);
+          layer.id = id;
+          documentInFrame.head.append(layer);
+        }
+        return layer;
+      }
+
+      function ensureFrameStyles() {
+        const roundedLink = ensureFrameLayer("link", "rounded-preview-css");
+        const generatedStyle = ensureFrameLayer("style", "rounded-preview-generated");
+        const customStyle = ensureFrameLayer("style", "rounded-preview-custom");
+        if (!roundedLink || !generatedStyle || !customStyle) return null;
+
+        roundedLink.rel = "stylesheet";
+        roundedLink.href = `${new URL("./rounded.css", window.location.href).href}?preview=${cssRevision}`;
+
+        return { roundedLink, generatedStyle, customStyle };
+      }
+
+      function colorValues() {
+        return Object.fromEntries(
+          [...document.querySelectorAll("[data-color]")].map((input) => [input.dataset.color, input.value]),
+        );
+      }
+
+      function selectedFont() {
+        const fonts = {
+          inter: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          plex: "'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace",
+          system: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        };
+        return fonts[fontSelect.value];
+      }
+
+      function generatedCss() {
+        const colors = colorValues();
+        const radius = Number(radiusInput.value);
+        const compactRadius = Math.max(3, Math.round(radius * 0.6));
+
+        return `
+          html[data-theme="nord-vscode"] {
+            --rr-bg: ${colors.bg};
+            --rr-bg-elevated: ${colors.surface1};
+            --rr-surface-1: ${colors.surface1};
+            --rr-surface-2: ${colors.surface2};
+            --rr-surface-3: color-mix(in srgb, ${colors.surface2} 78%, ${colors.text});
+            --rr-border: color-mix(in srgb, ${colors.border} 28%, transparent);
+            --rr-border-strong: color-mix(in srgb, ${colors.border} 44%, transparent);
+            --rr-text: ${colors.text};
+            --rr-text-muted: ${colors.muted};
+            --rr-text-faint: color-mix(in srgb, ${colors.muted} 74%, ${colors.bg});
+            --rr-cyan: ${colors.cyan};
+            --rr-blue: ${colors.blue};
+            --rr-green: ${colors.green};
+            --rr-yellow: ${colors.yellow};
+            --rr-red: ${colors.red};
+          }
+
+          html[data-theme="nord-vscode"] body #app :is(
+            .Conversation-Card,
+            [data-slot="card"],
+            [data-session-composer="true"],
+            [data-kanban-task-id]
+          ) {
+            border-radius: ${radius}px !important;
+          }
+
+          html[data-theme="nord-vscode"] body #app :is(
+            button,
+            input,
+            select,
+            textarea,
+            kbd,
+            [data-slot="badge"]
+          ) {
+            border-radius: ${compactRadius}px !important;
+          }
+
+          html[data-theme="nord-vscode"] body,
+          html[data-theme="nord-vscode"] .Conversation-Card,
+          html[data-theme="nord-vscode"] body :is(p, li, blockquote) {
+            font-family: ${selectedFont()} !important;
+          }
+        `;
+      }
+
+      function applyTheme() {
+        const layers = ensureFrameStyles();
+        const documentInFrame = frameDocument();
+        if (!layers || !documentInFrame) return;
+
+        const original = activeMode === "original";
+        documentInFrame.documentElement.dataset.theme = original ? "catppuccin" : "nord-vscode";
+        layers.roundedLink.disabled = original;
+        layers.fontLink.disabled = original;
+        layers.generatedStyle.media = original ? "not all" : "all";
+        layers.customStyle.media = original ? "not all" : "all";
+        layers.generatedStyle.textContent = generatedCss();
+        layers.customStyle.textContent = customCss.value;
+
+        radiusOutput.value = `${radiusInput.value}px`;
+        statusText.textContent = original ? "Exact captured original" : "Current rounded.css applied";
+      }
+
+      function setMode(mode) {
+        activeMode = mode;
+        document.querySelectorAll("[data-mode]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.mode === mode));
+        });
+        applyTheme();
+      }
+
+      function setViewport(viewport) {
+        activeViewport = viewport;
+        const size = viewports[viewport];
+        document.documentElement.style.setProperty("--frame-width", `${size.width}px`);
+        document.documentElement.style.setProperty("--frame-height", `${size.height}px`);
+        dimensions.textContent = `${size.width} × ${size.height}`;
+        document.querySelectorAll("[data-viewport]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.viewport === viewport));
+        });
+      }
+
+      function resetTheme() {
+        document.querySelectorAll("[data-color]").forEach((input) => {
+          input.value = defaults[input.dataset.color];
+        });
+        radiusInput.value = defaults.radius;
+        fontSelect.value = defaults.font;
+        customCss.value = `/* Example: focus one production selector. */\n#app [data-kanban-task-id] {\n  /* border-radius: 16px !important; */\n}`;
+        cssOutput.value = "Not applied";
+        applyTheme();
+      }
+
+      frame.addEventListener("load", () => {
+        applyTheme();
+        statusText.textContent = activeMode === "original" ? "Exact captured original" : "Current rounded.css applied";
+      });
+
+      document.querySelectorAll("[data-mode]").forEach((button) => {
+        button.addEventListener("click", () => setMode(button.dataset.mode));
+      });
+
+      document.querySelectorAll("[data-viewport]").forEach((button) => {
+        button.addEventListener("click", () => setViewport(button.dataset.viewport));
+      });
+
+      document.querySelectorAll("[data-color]").forEach((input) => {
+        input.addEventListener("input", applyTheme);
+      });
+
+      radiusInput.addEventListener("input", applyTheme);
+      fontSelect.addEventListener("change", applyTheme);
+      document.querySelector("#apply-css").addEventListener("click", () => {
+        cssOutput.value = "Applied";
+        applyTheme();
+      });
+      document.querySelector("#reset-theme").addEventListener("click", resetTheme);
+      document.querySelector("#reload-css").addEventListener("click", () => {
+        cssRevision = Date.now();
+        const layers = ensureFrameStyles();
+        if (layers) {
+          layers.roundedLink.href = `${new URL("./rounded.css", window.location.href).href}?preview=${cssRevision}`;
+          layers.roundedLink.disabled = activeMode === "original";
+          statusText.textContent = "rounded.css reloaded";
+        }
+      });
+
+      setViewport(activeViewport);
+    </script>
+  </body>
+</html>
