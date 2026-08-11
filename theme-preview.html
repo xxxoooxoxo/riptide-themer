@@ -125,7 +125,11 @@
         overflow-y: auto;
         border-right: 1px solid var(--lab-border);
         background: var(--lab-panel);
-        scrollbar-color: var(--lab-border-strong) transparent;
+        scrollbar-width: none;
+      }
+
+      .controls::-webkit-scrollbar {
+        display: none;
       }
 
       .controls-inner {
@@ -377,7 +381,10 @@
         min-height: 0;
         overflow: auto;
         padding: 18px;
-        scrollbar-color: var(--lab-border-strong) transparent;
+      }
+
+      .preview-scroll::-webkit-scrollbar {
+        width: 0;
       }
 
       .preview-frame-shell {

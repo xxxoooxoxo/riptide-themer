@@ -523,6 +523,43 @@ body {
   background: rgba(108, 112, 134, 0.5);
 }
 
+html,
+body {
+  scrollbar-width: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Keep side panels scrollable without persistent scrollbar chrome. */
+:is(
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"]
+),
+:is(
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"]
+) * {
+  scrollbar-width: none !important;
+}
+
+:is(
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"]
+)::-webkit-scrollbar,
+:is(
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"]
+) *::-webkit-scrollbar {
+  display: none !important;
+}
+
 
 /* ===== DROPDOWNS / POPOVERS ===== */
 
