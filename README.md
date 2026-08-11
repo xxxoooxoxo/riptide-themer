@@ -31,6 +31,8 @@ The installer builds the injector and patcher app, patches HumanLayer, and regis
 
 Edit `rounded.css`, then quit and reopen HumanLayer. CSS-only changes do not require rebuilding or re-signing the app.
 
+See the [theming guide](./THEMING.md) for the token map, preset workflow, selector guidance, and prompts for creating a theme with AI.
+
 To preview changes without restarting HumanLayer, serve the repository and open the standalone theme fixture:
 
 ```sh
