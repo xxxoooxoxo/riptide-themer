@@ -38,7 +38,7 @@ python3 -m http.server 4173
 open http://localhost:4173/theme-preview.html
 ```
 
-The editor uses the captured HumanLayer task page as its preview canvas. It loads the real `rounded.css`, provides an exact Original/Rounded A/B view, and includes live palette, radius, font, viewport, and custom CSS controls.
+The editor uses the captured HumanLayer task page as its preview canvas. It loads the real `rounded.css`, provides an exact Original/Rounded A/B view, and includes Vercel Dark and Pocket Light token presets plus live palette, radius, font, viewport, and custom CSS controls. Pocket Light layers `#F9F7F4`, `#FDFBFC`, and `#F6F5F1` with Inter typography, while Nautilus Blue (`#06B2DD`) is reserved for primary actions and focus. Pocket's component-only dark code and toast tokens are not presented as a full dark preset.
 
 `humanlayer-task-reference.html` contains the production DOM and all four loaded production stylesheets inline, with application scripts removed. Its task names, workspace path, links, and identifiers are neutral mock data.
 

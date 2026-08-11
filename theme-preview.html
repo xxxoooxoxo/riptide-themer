@@ -493,7 +493,20 @@
             </section>
 
             <section class="control-section">
-              <div class="section-heading"><h2>Palette</h2></div>
+              <div class="section-heading"><h2>Preset</h2></div>
+              <label class="field">
+                <span class="field-label"><span>Token baseline</span></span>
+                <select id="theme-preset">
+                  <option value="vercel" selected>Vercel Dark</option>
+                  <option value="pocket">Pocket Light</option>
+                  <option value="custom" disabled>Custom</option>
+                </select>
+              </label>
+              <p class="note" id="preset-description">Neutral black surfaces with restrained blue and status accents.</p>
+            </section>
+
+            <section class="control-section">
+              <div class="section-heading"><h2>Palette tokens</h2></div>
               <div class="palette">
                 <label class="color-control"><input type="color" value="#000000" data-color="bg" /><span>Background</span></label>
                 <label class="color-control"><input type="color" value="#111111" data-color="surface1" /><span>Surface</span></label>
@@ -501,7 +514,7 @@
                 <label class="color-control"><input type="color" value="#a1a1a1" data-color="border" /><span>Border</span></label>
                 <label class="color-control"><input type="color" value="#ededed" data-color="text" /><span>Text</span></label>
                 <label class="color-control"><input type="color" value="#a1a1a1" data-color="muted" /><span>Muted</span></label>
-                <label class="color-control"><input type="color" value="#ededed" data-color="cyan" /><span>Accent</span></label>
+                <label class="color-control"><input type="color" value="#ededed" data-color="cyan" /><span>Primary</span></label>
                 <label class="color-control"><input type="color" value="#0070f3" data-color="blue" /><span>Secondary</span></label>
                 <label class="color-control"><input type="color" value="#46a758" data-color="green" /><span>Success</span></label>
                 <label class="color-control"><input type="color" value="#f5a623" data-color="yellow" /><span>Warning</span></label>
@@ -563,20 +576,54 @@
     </div>
 
     <script>
-      const defaults = {
-        bg: "#000000",
-        surface1: "#111111",
-        surface2: "#171717",
-        border: "#a1a1a1",
-        text: "#ededed",
-        muted: "#a1a1a1",
-        cyan: "#ededed",
-        blue: "#0070f3",
-        green: "#46a758",
-        yellow: "#f5a623",
-        red: "#e5484d",
-        radius: "12",
-        font: "system",
+      const defaultCustomCss = `/* Example: focus one production selector. */\n#app [data-kanban-task-id] {\n  /* border-radius: 16px !important; */\n}`;
+
+      const themePresets = {
+        vercel: {
+          label: "Vercel Dark",
+          description: "Neutral black surfaces with restrained blue and status accents.",
+          colorScheme: "dark",
+          transparentBorders: true,
+          colors: {
+            bg: "#000000",
+            surface1: "#111111",
+            surface2: "#171717",
+            border: "#a1a1a1",
+            text: "#ededed",
+            muted: "#a1a1a1",
+            cyan: "#ededed",
+            blue: "#0070f3",
+            green: "#46a758",
+            yellow: "#f5a623",
+            red: "#e5484d",
+          },
+          radius: "12",
+          font: "system",
+        },
+        // Pocket's loaded app stylesheet exposes a complete light app palette.
+        // Its dark exports only cover code blocks and toasts, so they are not
+        // presented here as a page-wide dark preset.
+        pocket: {
+          label: "Pocket Light",
+          description: "Pocket's soft warm layers and Inter typography, with Nautilus blue reserved for primary actions and focus.",
+          colorScheme: "light",
+          transparentBorders: false,
+          colors: {
+            bg: "#f9f7f4",
+            surface1: "#fdfbfc",
+            surface2: "#f6f5f1",
+            border: "#e4e1dc",
+            text: "#0d0b07",
+            muted: "#75716b",
+            cyan: "#06b2dd",
+            blue: "#75716b",
+            green: "#2d7d4b",
+            yellow: "#84682f",
+            red: "#cc272e",
+          },
+          radius: "10",
+          font: "inter",
+        },
       };
 
       const viewports = {
@@ -587,6 +634,8 @@
 
       const frame = document.querySelector("#reference-frame");
       const statusText = document.querySelector("#status-text");
+      const presetSelect = document.querySelector("#theme-preset");
+      const presetDescription = document.querySelector("#preset-description");
       const radiusInput = document.querySelector("#radius");
       const radiusOutput = document.querySelector("#radius-output");
       const fontSelect = document.querySelector("#font-family");
@@ -595,6 +644,7 @@
       const dimensions = document.querySelector("#frame-dimensions");
       let activeMode = "rounded";
       let activeViewport = "desktop";
+      let activePreset = "vercel";
       let cssRevision = Date.now();
 
       function frameDocument() {
@@ -617,13 +667,16 @@
       function ensureFrameStyles() {
         const roundedLink = ensureFrameLayer("link", "rounded-preview-css");
         const generatedStyle = ensureFrameLayer("style", "rounded-preview-generated");
+        const presetLink = ensureFrameLayer("link", "theme-presets-preview-css");
         const customStyle = ensureFrameLayer("style", "rounded-preview-custom");
-        if (!roundedLink || !generatedStyle || !customStyle) return null;
+        if (!roundedLink || !generatedStyle || !presetLink || !customStyle) return null;
 
         roundedLink.rel = "stylesheet";
         roundedLink.href = `${new URL("./rounded.css", window.location.href).href}?preview=${cssRevision}`;
+        presetLink.rel = "stylesheet";
+        presetLink.href = `${new URL("./theme-presets.css", window.location.href).href}?preview=${cssRevision}`;
 
-        return { roundedLink, generatedStyle, customStyle };
+        return { roundedLink, generatedStyle, presetLink, customStyle };
       }
 
       function colorValues() {
@@ -643,27 +696,49 @@
 
       function generatedCss() {
         const colors = colorValues();
+        const preset = themePresets[activePreset];
         const radius = Number(radiusInput.value);
         const compactRadius = Math.max(3, Math.round(radius * 0.6));
+        const border = preset.transparentBorders
+          ? `color-mix(in srgb, ${colors.border} 22%, transparent)`
+          : colors.border;
+        const borderStrong = preset.transparentBorders
+          ? `color-mix(in srgb, ${colors.border} 34%, transparent)`
+          : `color-mix(in srgb, ${colors.border} 76%, ${colors.text})`;
 
         return `
           html[data-theme="nord-vscode"] {
+            color-scheme: ${preset.colorScheme};
             --rr-bg: ${colors.bg};
             --rr-bg-elevated: ${colors.surface1};
             --rr-surface-1: ${colors.surface1};
             --rr-surface-2: ${colors.surface2};
             --rr-surface-3: color-mix(in srgb, ${colors.surface2} 96%, ${colors.text});
             --rr-border-base: ${colors.border};
-            --rr-border: color-mix(in srgb, ${colors.border} 22%, transparent);
-            --rr-border-strong: color-mix(in srgb, ${colors.border} 34%, transparent);
+            --rr-border: ${border};
+            --rr-border-strong: ${borderStrong};
             --rr-text: ${colors.text};
             --rr-text-muted: ${colors.muted};
             --rr-text-faint: color-mix(in srgb, ${colors.muted} 64%, ${colors.bg});
+            --rr-font-content: ${selectedFont()};
             --rr-cyan: ${colors.cyan};
             --rr-blue: ${colors.blue};
             --rr-green: ${colors.green};
             --rr-yellow: ${colors.yellow};
             --rr-red: ${colors.red};
+            --terminal-bg: var(--rr-bg) !important;
+            --terminal-bg-alt: var(--rr-surface-2) !important;
+            --terminal-fg: var(--rr-text) !important;
+            --terminal-fg-dim: var(--rr-text-muted) !important;
+            --terminal-accent: var(--rr-cyan) !important;
+            --terminal-accent-alt: var(--rr-blue) !important;
+            --terminal-border: var(--rr-border) !important;
+            --terminal-input-bg: var(--rr-surface-1) !important;
+            --terminal-input-border: var(--rr-border) !important;
+            --terminal-selection: color-mix(in srgb, var(--rr-cyan) 18%, transparent) !important;
+            --terminal-success: var(--rr-green) !important;
+            --terminal-warning: var(--rr-yellow) !important;
+            --terminal-error: var(--rr-red) !important;
           }
 
           html[data-theme="nord-vscode"] body #app :is(
@@ -701,14 +776,44 @@
 
         const original = activeMode === "original";
         documentInFrame.documentElement.dataset.theme = original ? "catppuccin" : "nord-vscode";
+        if (original) {
+          delete documentInFrame.documentElement.dataset.rrPreset;
+        } else {
+          documentInFrame.documentElement.dataset.rrPreset = activePreset;
+        }
         layers.roundedLink.disabled = original;
+        layers.presetLink.disabled = original;
         layers.generatedStyle.media = original ? "not all" : "all";
         layers.customStyle.media = original ? "not all" : "all";
         layers.generatedStyle.textContent = generatedCss();
         layers.customStyle.textContent = customCss.value;
 
         radiusOutput.value = `${radiusInput.value}px`;
-        statusText.textContent = original ? "Exact captured original" : "Current rounded.css applied";
+        statusText.textContent = original ? "Exact captured original" : `${themePresets[activePreset].label} · rounded.css`;
+      }
+
+      function applyPreset(presetId, { resetCustomCss = false } = {}) {
+        const preset = themePresets[presetId];
+        if (!preset) return;
+
+        activePreset = presetId;
+        presetSelect.value = presetId;
+        presetDescription.textContent = preset.description;
+        document.querySelectorAll("[data-color]").forEach((input) => {
+          input.value = preset.colors[input.dataset.color];
+        });
+        radiusInput.value = preset.radius;
+        fontSelect.value = preset.font;
+        if (resetCustomCss) {
+          customCss.value = defaultCustomCss;
+          cssOutput.value = "Not applied";
+        }
+        applyTheme();
+      }
+
+      function markPresetCustom() {
+        presetSelect.value = "custom";
+        presetDescription.textContent = `Adjusted from ${themePresets[activePreset].label}.`;
       }
 
       function setMode(mode) {
@@ -731,19 +836,12 @@
       }
 
       function resetTheme() {
-        document.querySelectorAll("[data-color]").forEach((input) => {
-          input.value = defaults[input.dataset.color];
-        });
-        radiusInput.value = defaults.radius;
-        fontSelect.value = defaults.font;
-        customCss.value = `/* Example: focus one production selector. */\n#app [data-kanban-task-id] {\n  /* border-radius: 16px !important; */\n}`;
-        cssOutput.value = "Not applied";
-        applyTheme();
+        applyPreset(activePreset, { resetCustomCss: true });
       }
 
       frame.addEventListener("load", () => {
         applyTheme();
-        statusText.textContent = activeMode === "original" ? "Exact captured original" : "Current rounded.css applied";
+        statusText.textContent = activeMode === "original" ? "Exact captured original" : `${themePresets[activePreset].label} · rounded.css`;
       });
 
       document.querySelectorAll("[data-mode]").forEach((button) => {
@@ -754,12 +852,23 @@
         button.addEventListener("click", () => setViewport(button.dataset.viewport));
       });
 
+      presetSelect.addEventListener("change", () => applyPreset(presetSelect.value));
+
       document.querySelectorAll("[data-color]").forEach((input) => {
-        input.addEventListener("input", applyTheme);
+        input.addEventListener("input", () => {
+          markPresetCustom();
+          applyTheme();
+        });
       });
 
-      radiusInput.addEventListener("input", applyTheme);
-      fontSelect.addEventListener("change", applyTheme);
+      radiusInput.addEventListener("input", () => {
+        markPresetCustom();
+        applyTheme();
+      });
+      fontSelect.addEventListener("change", () => {
+        markPresetCustom();
+        applyTheme();
+      });
       document.querySelector("#apply-css").addEventListener("click", () => {
         cssOutput.value = "Applied";
         applyTheme();
@@ -770,7 +879,9 @@
         const layers = ensureFrameStyles();
         if (layers) {
           layers.roundedLink.href = `${new URL("./rounded.css", window.location.href).href}?preview=${cssRevision}`;
+          layers.presetLink.href = `${new URL("./theme-presets.css", window.location.href).href}?preview=${cssRevision}`;
           layers.roundedLink.disabled = activeMode === "original";
+          layers.presetLink.disabled = activeMode === "original";
           statusText.textContent = "rounded.css reloaded";
         }
       });

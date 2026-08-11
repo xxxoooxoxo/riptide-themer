@@ -576,12 +576,13 @@ div[role="tooltip"] {
 }
 
 
-/* ===== 9. CURRENT RIPTIDE APP COHESION — VERCEL TOKENS ===== */
+/* ===== 9. CURRENT RIPTIDE APP COHESION — THEME TOKENS ===== */
 
 /* HumanLayer currently exposes the nord-vscode hook. The patch keeps that
  * stable selector but supplies a neutral Vercel-style token set. */
 html[data-theme="nord-vscode"],
 :root {
+  color-scheme: dark;
   --rr-bg: #000000;
   --rr-bg-elevated: #0a0a0a;
   --rr-surface-1: #111111;
@@ -602,8 +603,17 @@ html[data-theme="nord-vscode"],
   --rr-font-content: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --terminal-bg: var(--rr-bg) !important;
   --terminal-bg-alt: var(--rr-surface-2) !important;
+  --terminal-fg: var(--rr-text) !important;
+  --terminal-fg-dim: var(--rr-text-muted) !important;
   --terminal-border: var(--rr-border) !important;
   --terminal-accent: var(--rr-cyan) !important;
+  --terminal-accent-alt: var(--rr-blue) !important;
+  --terminal-input-bg: var(--rr-surface-1) !important;
+  --terminal-input-border: var(--rr-border) !important;
+  --terminal-selection: color-mix(in srgb, var(--rr-cyan) 18%, transparent) !important;
+  --terminal-success: var(--rr-green) !important;
+  --terminal-warning: var(--rr-yellow) !important;
+  --terminal-error: var(--rr-red) !important;
 }
 
 html[data-theme="nord-vscode"],
