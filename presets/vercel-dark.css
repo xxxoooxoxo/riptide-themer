@@ -1,0 +1,36 @@
+/* Vercel Dark — neutral black surfaces with restrained blue and status accents. */
+
+html[data-rr-preset="vercel-dark"] {
+  color-scheme: dark;
+  --rr-bg: #000000;
+  --rr-bg-elevated: #0a0a0a;
+  --rr-surface-1: #111111;
+  --rr-surface-2: #171717;
+  --rr-surface-3: #1f1f1f;
+  --rr-border-base: #a1a1a1;
+  --rr-border: color-mix(in srgb, var(--rr-border-base) 22%, transparent);
+  --rr-border-strong: color-mix(in srgb, var(--rr-border-base) 34%, transparent);
+  --rr-text: #ededed;
+  --rr-text-muted: #a1a1a1;
+  --rr-text-faint: #666666;
+  --rr-cyan: #ededed;
+  --rr-blue: #0070f3;
+  --rr-green: #46a758;
+  --rr-yellow: #f5a623;
+  --rr-red: #e5484d;
+  --rr-shadow: none;
+  --rr-font-content: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --terminal-bg: var(--rr-bg) !important;
+  --terminal-bg-alt: var(--rr-surface-2) !important;
+  --terminal-fg: var(--rr-text) !important;
+  --terminal-fg-dim: var(--rr-text-muted) !important;
+  --terminal-border: var(--rr-border) !important;
+  --terminal-accent: var(--rr-cyan) !important;
+  --terminal-accent-alt: var(--rr-blue) !important;
+  --terminal-input-bg: var(--rr-surface-1) !important;
+  --terminal-input-border: var(--rr-border) !important;
+  --terminal-selection: color-mix(in srgb, var(--rr-cyan) 18%, transparent) !important;
+  --terminal-success: var(--rr-green) !important;
+  --terminal-warning: var(--rr-yellow) !important;
+  --terminal-error: var(--rr-red) !important;
+}

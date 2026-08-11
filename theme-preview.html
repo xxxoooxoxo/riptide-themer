@@ -519,7 +519,7 @@
               <label class="field">
                 <span class="field-label"><span>Token baseline</span></span>
                 <select id="theme-preset">
-                  <option value="vercel" selected>Vercel Dark</option>
+                  <option value="vercel-dark" selected>Vercel Dark</option>
                   <option value="lets-get-nauti">Let's Get Nauti</option>
                   <option value="custom" disabled>Custom</option>
                 </select>
@@ -601,7 +601,7 @@
       const defaultCustomCss = `/* Example: focus one production selector. */\n#app [data-kanban-task-id] {\n  /* border-radius: 16px !important; */\n}`;
 
       const themePresets = {
-        vercel: {
+        "vercel-dark": {
           label: "Vercel Dark",
           description: "Neutral black surfaces with restrained blue and status accents.",
           colorScheme: "dark",
@@ -666,7 +666,7 @@
       const dimensions = document.querySelector("#frame-dimensions");
       let activeMode = "rounded";
       let activeViewport = "desktop";
-      let activePreset = "vercel";
+      let activePreset = "vercel-dark";
       let cssRevision = Date.now();
 
       function frameDocument() {
@@ -688,8 +688,8 @@
 
       function ensureFrameStyles() {
         const roundedLink = ensureFrameLayer("link", "rounded-preview-css");
-        const generatedStyle = ensureFrameLayer("style", "rounded-preview-generated");
         const presetLink = ensureFrameLayer("link", "theme-presets-preview-css");
+        const generatedStyle = ensureFrameLayer("style", "rounded-preview-generated");
         const customStyle = ensureFrameLayer("style", "rounded-preview-custom");
         if (!roundedLink || !generatedStyle || !presetLink || !customStyle) return null;
 
@@ -697,6 +697,10 @@
         roundedLink.href = `${new URL("./rounded.css", window.location.href).href}?preview=${cssRevision}`;
         presetLink.rel = "stylesheet";
         presetLink.href = `${new URL("./theme-presets.css", window.location.href).href}?preview=${cssRevision}`;
+
+        // Preset files provide native defaults. Generated controls stay later
+        // in the cascade so live palette and typography edits still win.
+        documentInFrame.head.append(roundedLink, presetLink, generatedStyle, customStyle);
 
         return { roundedLink, generatedStyle, presetLink, customStyle };
       }

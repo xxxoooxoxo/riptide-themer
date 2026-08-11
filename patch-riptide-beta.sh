@@ -18,11 +18,14 @@ APP="/Applications/HumanLayer.app"
 PLIST="$APP/Contents/Info.plist"
 EXE="$APP/Contents/MacOS/HumanLayer-Local"
 CSS="$ROOT/rounded.css"
+PRESETS_DIR="$ROOT/presets"
 LIB="$ROOT/build/libriptide_css_injector.dylib"
 SRC="$ROOT/wk-css-injector.m"
 ENTITLEMENTS="$ROOT/local-entitlements.plist"
 STAMP_DIR="$HOME/Library/Application Support/Riptide Rounded Patcher"
 STAMP="$STAMP_DIR/patch-stamp"
+PRESET_CONFIG="$STAMP_DIR/theme-preset"
+DEFAULT_PRESET="vercel-dark"
 
 mkdir -p "$STAMP_DIR"
 
@@ -38,6 +41,27 @@ if [[ ! -f "$CSS" ]]; then
   exit 1
 fi
 
+# A shell override updates the persisted selection. Otherwise, reuse the saved
+# selection so HumanLayer updates do not reset the user's theme.
+if [[ -n "${RIPTIDE_THEME_PRESET:-}" ]]; then
+  PRESET="$RIPTIDE_THEME_PRESET"
+elif [[ -f "$PRESET_CONFIG" ]]; then
+  PRESET="$(<"$PRESET_CONFIG")"
+else
+  PRESET="$DEFAULT_PRESET"
+fi
+
+if [[ ! "$PRESET" =~ '^[a-z0-9]+(-[a-z0-9]+)*$' || ! -f "$PRESETS_DIR/$PRESET.css" ]]; then
+  log "unknown theme preset: $PRESET" >&2
+  log "available presets:" >&2
+  for preset_file in "$PRESETS_DIR"/*.css(N); do
+    log "  ${${preset_file:t}%.css}" >&2
+  done
+  exit 1
+fi
+
+print -r -- "$PRESET" > "$PRESET_CONFIG"
+
 # Build the injector dylib if missing or stale.
 if [[ ! -f "$LIB" || "$SRC" -nt "$LIB" ]]; then
   log "building injector dylib"
@@ -45,10 +69,13 @@ if [[ ! -f "$LIB" || "$SRC" -nt "$LIB" ]]; then
 fi
 
 # Skip if already patched for this exact bundle signing timestamp + dylib mtime.
-current_sig="$(stat -f '%m' "$EXE" 2>/dev/null || echo 0):$(stat -f '%m' "$LIB" 2>/dev/null || echo 0):$(stat -f '%m' "$CSS" 2>/dev/null || echo 0)"
+current_sig="$(stat -f '%m' "$EXE" 2>/dev/null || echo 0):$(stat -f '%m' "$LIB" 2>/dev/null || echo 0):$(stat -f '%m' "$CSS" 2>/dev/null || echo 0):$PRESET:$(stat -f '%m' "$PRESETS_DIR/$PRESET.css" 2>/dev/null || echo 0)"
 if [[ -f "$STAMP" && "$(cat "$STAMP" 2>/dev/null)" == "$current_sig" ]]; then
   # Verify LSEnvironment is still present (belt and suspenders).
-  if /usr/libexec/PlistBuddy -c "Print :LSEnvironment:DYLD_INSERT_LIBRARIES" "$PLIST" >/dev/null 2>&1; then
+  installed_css="$(/usr/libexec/PlistBuddy -c "Print :LSEnvironment:RIPTIDE_CUSTOM_CSS" "$PLIST" 2>/dev/null || true)"
+  installed_preset="$(/usr/libexec/PlistBuddy -c "Print :LSEnvironment:RIPTIDE_THEME_PRESET" "$PLIST" 2>/dev/null || true)"
+  if /usr/libexec/PlistBuddy -c "Print :LSEnvironment:DYLD_INSERT_LIBRARIES" "$PLIST" >/dev/null 2>&1 \
+    && [[ "$installed_css" == "$CSS" && "$installed_preset" == "$PRESET" ]]; then
     log "already patched, nothing to do"
     exit 0
   fi
@@ -71,6 +98,7 @@ log "writing LSEnvironment into Info.plist"
 /usr/libexec/PlistBuddy -c "Add :LSEnvironment dict" "$PLIST"
 /usr/libexec/PlistBuddy -c "Add :LSEnvironment:DYLD_INSERT_LIBRARIES string $LIB" "$PLIST"
 /usr/libexec/PlistBuddy -c "Add :LSEnvironment:RIPTIDE_CUSTOM_CSS string $CSS" "$PLIST"
+/usr/libexec/PlistBuddy -c "Add :LSEnvironment:RIPTIDE_THEME_PRESET string $PRESET" "$PLIST"
 
 log "re-signing $APP (ad-hoc, disable-library-validation)"
 codesign \
@@ -84,5 +112,5 @@ codesign \
 # Refresh LaunchServices so the new LSEnvironment is honored.
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$APP" >/dev/null 2>&1 || true
 
-print -r -- "$(stat -f '%m' "$EXE"):$(stat -f '%m' "$LIB"):$(stat -f '%m' "$CSS")" > "$STAMP"
-log "done"
+print -r -- "$(stat -f '%m' "$EXE"):$(stat -f '%m' "$LIB"):$(stat -f '%m' "$CSS"):$PRESET:$(stat -f '%m' "$PRESETS_DIR/$PRESET.css")" > "$STAMP"
+log "done — active preset: $PRESET"

@@ -39,6 +39,23 @@ static NSString *RiptideJSONString(NSString *value) {
   return [arrayJSON substringWithRange:NSMakeRange(1, arrayJSON.length - 2)];
 }
 
+static NSString *RiptidePresetName(void) {
+  const char *presetEnv = getenv("RIPTIDE_THEME_PRESET");
+  if (!presetEnv || presetEnv[0] == '\0') {
+    return nil;
+  }
+
+  NSString *preset = [NSString stringWithUTF8String:presetEnv];
+  NSCharacterSet *allowed = [NSCharacterSet characterSetWithCharactersInString:
+    @"abcdefghijklmnopqrstuvwxyz0123456789-"];
+  if (!preset.length || [preset rangeOfCharacterFromSet:allowed.invertedSet].location != NSNotFound) {
+    RiptideLog([NSString stringWithFormat:@"ignored invalid theme preset: %@", preset]);
+    return nil;
+  }
+
+  return preset;
+}
+
 static NSString *RiptideInjectionScript(void) {
   const char *cssPathEnv = getenv("RIPTIDE_CUSTOM_CSS");
   if (!cssPathEnv || cssPathEnv[0] == '\0') {
@@ -56,16 +73,38 @@ static NSString *RiptideInjectionScript(void) {
     return nil;
   }
 
+  NSString *preset = RiptidePresetName();
+  if (preset.length) {
+    NSString *presetPath = [[[cssPath stringByDeletingLastPathComponent]
+      stringByAppendingPathComponent:@"presets"]
+      stringByAppendingPathComponent:[preset stringByAppendingPathExtension:@"css"]];
+    error = nil;
+    NSString *presetCSS = [NSString stringWithContentsOfFile:presetPath
+                                                    encoding:NSUTF8StringEncoding
+                                                       error:&error];
+    if (!presetCSS || error) {
+      RiptideLog([NSString stringWithFormat:@"failed to read theme preset at %@", presetPath]);
+      preset = nil;
+    } else {
+      css = [css stringByAppendingFormat:@"\n\n%@", presetCSS];
+      RiptideLog([NSString stringWithFormat:@"loaded theme preset %@", preset]);
+    }
+  }
+
   NSString *cssJSON = RiptideJSONString(css);
+  NSString *presetJSON = RiptideJSONString(preset ?: @"");
 
   return [NSString stringWithFormat:
     @"(() => {"
       "const css = %@;"
+      "const preset = %@;"
       "const cssId = 'riptide-rounded-local-css';"
       "function target() { return document.head || document.documentElement; }"
       "function install() {"
         "const parent = target();"
         "if (!parent) { setTimeout(install, 16); return; }"
+        "if (preset) document.documentElement.dataset.rrPreset = preset;"
+        "else delete document.documentElement.dataset.rrPreset;"
         "let style = document.getElementById(cssId);"
         "if (!style) {"
           "style = document.createElement('style');"
@@ -81,7 +120,8 @@ static NSString *RiptideInjectionScript(void) {
         "if (!document.getElementById(cssId)) install();"
       "}).observe(document.documentElement || document, { childList: true, subtree: true });"
     "})();",
-    cssJSON
+    cssJSON,
+    presetJSON
   ];
 }
 
@@ -105,7 +145,7 @@ static void RiptideAddUserScript(WKWebViewConfiguration *configuration) {
                                                 injectionTime:WKUserScriptInjectionTimeAtDocumentStart
                                              forMainFrameOnly:YES];
   [controller addUserScript:script];
-  RiptideLog(@"added WKUserScript for rounded CSS");
+  RiptideLog(@"added WKUserScript for rounded CSS and selected preset");
 }
 
 typedef id (*RiptideInitWithFrameConfigurationIMP)(id self, SEL _cmd, CGRect frame, WKWebViewConfiguration *configuration);

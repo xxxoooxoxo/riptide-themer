@@ -22,23 +22,24 @@ Start with these controls:
 5. Switch between **Original** and **Rounded** to confirm that each change is intentional.
 6. Use **Custom CSS** for a focused experiment.
 
-Custom CSS in the editor is temporary. Copy any rules that you want to keep into [`rounded.css`](./rounded.css) or a scoped preset in [`theme-presets.css`](./theme-presets.css).
+Custom CSS in the editor is temporary. Copy shared rules into [`rounded.css`](./rounded.css) or preset-specific rules into the matching file under [`presets/`](./presets).
 
 ## Understand the theme files
 
 | File | Purpose |
 | --- | --- |
-| [`rounded.css`](./rounded.css) | The stylesheet injected into the installed HumanLayer app. Changes here are permanent after you restart the app. |
+| [`rounded.css`](./rounded.css) | Shared styling injected before the selected preset. |
 | [`theme-preview.html`](./theme-preview.html) | The editor controls, preset names, and preset token values. |
-| [`theme-presets.css`](./theme-presets.css) | Preview-only component treatments for named presets. The installer does not inject this file. |
+| [`presets/`](./presets) | Installable preset tokens and component treatments. The injector loads the selected file after `rounded.css`. |
+| [`theme-presets.css`](./theme-presets.css) | Preview bundle that imports the installable preset files. |
 | [`current-riptide-dom-reference.md`](./current-riptide-dom-reference.md) | A compact map of stable Riptide selectors. |
 | [`humanlayer-task-reference.html`](./humanlayer-task-reference.html) | The sanitized interface used by the preview. Do not hand-edit it to create a theme. |
 
-The installed patch always reads `rounded.css`. If you design a preset in the editor and want to use it in the app, move its final tokens and component rules into `rounded.css`.
+The installed patch reads `rounded.css`, then `presets/<selected-preset>.css`. Run `./set-theme.sh <preset>` to change the selection. The choice is stored in `~/Library/Application Support/Riptide Rounded Patcher/theme-preset` and survives app updates.
 
 ## Change the main design tokens
 
-Edit the `CURRENT RIPTIDE APP COHESION — THEME TOKENS` section in `rounded.css`. These tokens control most of the interface:
+Edit the root selector in the active preset file. These tokens control most of the interface:
 
 | Token | Controls |
 | --- | --- |
@@ -60,19 +61,20 @@ Edit the `CURRENT RIPTIDE APP COHESION — THEME TOKENS` section in `rounded.css
 
 Keep success, warning, and error colors distinct. A brand color should not replace status colors.
 
-After you save `rounded.css`, select **Reload rounded.css** in the editor. To see the result in HumanLayer, quit and reopen the app. CSS-only changes do not require a rebuild or a new signature.
+After you save a stylesheet, select **Reload rounded.css** in the editor. To see the result in HumanLayer, quit and reopen the app. CSS-only changes do not require a rebuild or a new signature.
 
-## Add a preview preset
+## Add a preset
 
 Use a lowercase kebab-case ID, such as `paper-blue`.
 
-1. Add an `<option>` to `#theme-preset` in `theme-preview.html`.
-2. Add a matching entry to `themePresets`. Define `colorScheme`, `transparentBorders`, all palette colors, `radius`, and `font`.
-3. If the preset changes more than tokens, add rules to `theme-presets.css` under `html[data-rr-preset="paper-blue"]`.
-4. Scope every preset-specific rule to that attribute. Unscoped rules can change other presets.
+1. Create `presets/paper-blue.css` and scope every rule under `html[data-rr-preset="paper-blue"]`.
+2. Import that file from `theme-presets.css` so the editor can load it.
+3. Add an `<option>` to `#theme-preset` in `theme-preview.html`.
+4. Add a matching entry to `themePresets`. Define `colorScheme`, `transparentBorders`, all palette colors, `radius`, and `font`.
 5. Test the preset at all three preview sizes and compare it with **Original**.
+6. Run `./set-theme.sh paper-blue`, then reopen HumanLayer.
 
-Token changes belong in `theme-preview.html`. Component changes, such as a filled active navigation row or a special button treatment, belong in `theme-presets.css`.
+Keep the preset's real token defaults and component rules together in `presets/paper-blue.css`. Mirror its editable token values in `theme-preview.html` so the controls open with the same palette.
 
 ## Add a component rule
 
@@ -110,11 +112,11 @@ Visual direction:
 - green, yellow, and red remain semantic status colors
 - 10px surface radius and Inter for content
 
-Read THEMING.md, rounded.css, theme-preview.html, theme-presets.css, and
+Read THEMING.md, rounded.css, theme-preview.html, theme-presets.css, presets/, and
 current-riptide-dom-reference.md before editing.
 
-Implement the preset in theme-preview.html. Add only the component-specific
-rules that it needs to theme-presets.css, scoped under
+Implement the preset in theme-preview.html and presets/paper-blue.css. Import
+the preset from theme-presets.css. Scope every preset rule under
 html[data-rr-preset="paper-blue"]. Do not edit the native patcher, captured HTML,
 or private environment files. Do not invent selectors when the DOM reference
 contains a stable hook. Do not run a build. Check the diff and run the available
@@ -142,17 +144,17 @@ Before you keep an AI-generated theme, confirm that:
 - Text and controls remain readable in default, hover, active, focus, disabled, success, warning, and error states.
 - The layout still works at desktop, tablet, and mobile sizes.
 - **Original** still matches the captured interface.
-- The installed version of the theme is present in `rounded.css`, not only in the preview-only preset file.
+- The installable theme is present under `presets/`, not only in preview JavaScript.
 
 Inspect the final changes with:
 
 ```sh
-git diff -- README.md THEMING.md rounded.css theme-preview.html theme-presets.css
+git diff -- README.md THEMING.md rounded.css theme-preview.html theme-presets.css presets/
 git diff --check
 ```
 
 ## Recover from a bad theme
 
-Use **Reset** in the editor to return to the selected preset. If an installed CSS change is broken, revert that change in `rounded.css`, then quit and reopen HumanLayer.
+Use **Reset** in the editor to return to the selected preset. If an installed preset is broken, switch back with `./set-theme.sh vercel-dark`, then reopen HumanLayer.
 
 To remove the patch completely, follow the [Remove](./README.md#remove) instructions.
