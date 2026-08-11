@@ -1,29 +1,29 @@
 /* Preview-only visual treatments for token presets. The data attribute is set
  * by theme-preview.html and is not present in the injected HumanLayer app. */
 
-html[data-rr-preset="pocket"] {
-  --rr-pocket-sidebar: #f6f5f1;
-  --rr-pocket-hover: #f1efeb;
-  --rr-pocket-selected: #ebe9e4;
-  --rr-pocket-primary: #06b2dd;
-  --rr-pocket-primary-hover: #05a2c9;
-  --rr-pocket-primary-foreground: #ffffff;
+html[data-rr-preset="lets-get-nauti"] {
+  --rr-nauti-sidebar: #f6f5f1;
+  --rr-nauti-hover: #f1efeb;
+  --rr-nauti-selected: #ebe9e4;
+  --rr-nauti-primary: #06b2dd;
+  --rr-nauti-primary-hover: #05a2c9;
+  --rr-nauti-primary-foreground: #ffffff;
 }
 
 /* Pocket uses quiet Inter typography throughout the application. Preserve mono
  * only for content that is semantically code or terminal output. */
-html[data-rr-preset="pocket"] body #app,
-html[data-rr-preset="pocket"] body #app * {
+html[data-rr-preset="lets-get-nauti"] body #app,
+html[data-rr-preset="lets-get-nauti"] body #app * {
   font-family: var(--rr-font-content, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif) !important;
   font-synthesis: none;
 }
 
-html[data-rr-preset="pocket"] body #app {
+html[data-rr-preset="lets-get-nauti"] body #app {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-html[data-rr-preset="pocket"] body #app :is(
+html[data-rr-preset="lets-get-nauti"] body #app :is(
   pre,
   pre *,
   code,
@@ -39,19 +39,19 @@ html[data-rr-preset="pocket"] body #app :is(
 }
 
 /* Warm layered surfaces: shell, sidebar, then white content cards. */
-html[data-rr-preset="pocket"] body,
-html[data-rr-preset="pocket"] #app,
-html[data-rr-preset="pocket"] #main {
+html[data-rr-preset="lets-get-nauti"] body,
+html[data-rr-preset="lets-get-nauti"] #app,
+html[data-rr-preset="lets-get-nauti"] #main {
   background: var(--rr-bg) !important;
 }
 
-html[data-rr-preset="pocket"] [data-testid="task-tree-sidebar"] .bg-sidebar,
-html[data-rr-preset="pocket"] [data-testid="task-tree-sidebar"] .h-12 {
-  background: var(--rr-pocket-sidebar) !important;
+html[data-rr-preset="lets-get-nauti"] [data-testid="task-tree-sidebar"] .bg-sidebar,
+html[data-rr-preset="lets-get-nauti"] [data-testid="task-tree-sidebar"] .h-12 {
+  background: var(--rr-nauti-sidebar) !important;
   backdrop-filter: none !important;
 }
 
-html[data-rr-preset="pocket"] :is(.Conversation-Card, [data-slot="card"]) {
+html[data-rr-preset="lets-get-nauti"] :is(.Conversation-Card, [data-slot="card"]) {
   border-color: var(--rr-border) !important;
   border-radius: 16px !important;
   background: var(--rr-surface-1) !important;
@@ -60,30 +60,30 @@ html[data-rr-preset="pocket"] :is(.Conversation-Card, [data-slot="card"]) {
 
 /* Pocket navigation uses neutral filled selection instead of brand-colored
  * rails. The brand color is intentionally absent from ordinary navigation. */
-html[data-rr-preset="pocket"] :is([data-sidebar-task-id], [data-sidebar-session-id]) {
+html[data-rr-preset="lets-get-nauti"] :is([data-sidebar-task-id], [data-sidebar-session-id]) {
   border-radius: 10px !important;
 }
 
-html[data-rr-preset="pocket"] :is([data-sidebar-task-id], [data-sidebar-session-id]):hover {
-  background: var(--rr-pocket-hover) !important;
+html[data-rr-preset="lets-get-nauti"] :is([data-sidebar-task-id], [data-sidebar-session-id]):hover {
+  background: var(--rr-nauti-hover) !important;
 }
 
-html[data-rr-preset="pocket"] :is(
+html[data-rr-preset="lets-get-nauti"] :is(
   [data-sidebar-task-id][data-active="true"],
   [data-sidebar-session-id][data-active="true"]
 ) {
   border-right-color: transparent !important;
-  background: var(--rr-pocket-selected) !important;
+  background: var(--rr-nauti-selected) !important;
   color: var(--rr-text) !important;
 }
 
-html[data-rr-preset="pocket"] [data-testid="task-tree-sidebar"] [class*="uppercase"] {
+html[data-rr-preset="lets-get-nauti"] [data-testid="task-tree-sidebar"] [class*="uppercase"] {
   text-transform: none !important;
   letter-spacing: 0.04em !important;
 }
 
 /* Accent-colored utility text, tabs, and labels become neutral. */
-html[data-rr-preset="pocket"] body #app :is(
+html[data-rr-preset="lets-get-nauti"] body #app :is(
   .text-accent,
   [class*="text-[var(--terminal-accent)]"],
   [class*="text-[var(--terminal-success)]"]
@@ -91,7 +91,7 @@ html[data-rr-preset="pocket"] body #app :is(
   color: var(--rr-text-muted) !important;
 }
 
-html[data-rr-preset="pocket"] body #app :is(
+html[data-rr-preset="lets-get-nauti"] body #app :is(
   .border-accent,
   [class*="border-[var(--terminal-accent)]"],
   [class*="border-[var(--terminal-success)]"]
@@ -99,21 +99,21 @@ html[data-rr-preset="pocket"] body #app :is(
   border-color: var(--rr-border) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button[role="tab"] {
+html[data-rr-preset="lets-get-nauti"] body #app button[role="tab"] {
   letter-spacing: normal !important;
   text-transform: none !important;
 }
 
-html[data-rr-preset="pocket"] body #app [data-testid="sidebar"] button[role="tab"][data-state="active"],
-html[data-rr-preset="pocket"] body #app button[role="tab"][data-state="active"] {
+html[data-rr-preset="lets-get-nauti"] body #app [data-testid="sidebar"] button[role="tab"][data-state="active"],
+html[data-rr-preset="lets-get-nauti"] body #app button[role="tab"][data-state="active"] {
   border-color: transparent !important;
-  background: var(--rr-pocket-selected) !important;
+  background: var(--rr-nauti-selected) !important;
   color: var(--rr-text) !important;
   box-shadow: none !important;
 }
 
 /* Badges and shortcuts are warm gray chips rather than outlined accents. */
-html[data-rr-preset="pocket"] :is([data-slot="badge"], kbd) {
+html[data-rr-preset="lets-get-nauti"] :is([data-slot="badge"], kbd) {
   border-color: var(--rr-border) !important;
   border-radius: 8px !important;
   background: var(--rr-surface-2) !important;
@@ -123,7 +123,7 @@ html[data-rr-preset="pocket"] :is([data-slot="badge"], kbd) {
 
 /* Buttons follow Shipyard's soft, compact treatment. Primary actions use
  * Nautilus Blue with a light inset highlight and a restrained lower shadow. */
-html[data-rr-preset="pocket"] body #app button[data-slot="button"]:not([role="switch"]):not([role="tab"]):not([class*="rounded-full"]) {
+html[data-rr-preset="lets-get-nauti"] body #app button[data-slot="button"]:not([role="switch"]):not([role="tab"]):not([class*="rounded-full"]) {
   border-radius: 12px !important;
   font-weight: 500 !important;
   letter-spacing: normal !important;
@@ -135,7 +135,7 @@ html[data-rr-preset="pocket"] body #app button[data-slot="button"]:not([role="sw
     transform 80ms ease !important;
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent {
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent {
   border-color: var(--rr-border) !important;
   background: var(--rr-surface-2) !important;
   background-color: var(--rr-surface-2) !important;
@@ -143,41 +143,41 @@ html[data-rr-preset="pocket"] body #app button.text-accent {
   box-shadow: none !important;
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent[class*="bg-accent/20"] {
-  border-color: color-mix(in srgb, var(--rr-pocket-primary) 86%, var(--rr-text)) !important;
-  background: var(--rr-pocket-primary) !important;
-  background-color: var(--rr-pocket-primary) !important;
-  color: var(--rr-pocket-primary-foreground) !important;
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent[class*="bg-accent/20"] {
+  border-color: color-mix(in srgb, var(--rr-nauti-primary) 86%, var(--rr-text)) !important;
+  background: var(--rr-nauti-primary) !important;
+  background-color: var(--rr-nauti-primary) !important;
+  color: var(--rr-nauti-primary-foreground) !important;
   box-shadow:
-    inset 0 1px 0 color-mix(in srgb, var(--rr-pocket-primary-foreground) 24%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--rr-nauti-primary-foreground) 24%, transparent),
     0 1px 2px color-mix(in srgb, var(--rr-text) 18%, transparent),
-    0 3px 8px color-mix(in srgb, var(--rr-pocket-primary) 18%, transparent) !important;
+    0 3px 8px color-mix(in srgb, var(--rr-nauti-primary) 18%, transparent) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent[class*="bg-accent/20"]:hover {
-  border-color: color-mix(in srgb, var(--rr-pocket-primary-hover) 86%, var(--rr-text)) !important;
-  background: var(--rr-pocket-primary-hover) !important;
-  background-color: var(--rr-pocket-primary-hover) !important;
-  color: var(--rr-pocket-primary-foreground) !important;
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent[class*="bg-accent/20"]:hover {
+  border-color: color-mix(in srgb, var(--rr-nauti-primary-hover) 86%, var(--rr-text)) !important;
+  background: var(--rr-nauti-primary-hover) !important;
+  background-color: var(--rr-nauti-primary-hover) !important;
+  color: var(--rr-nauti-primary-foreground) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent[class*="bg-accent/20"]:active {
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent[class*="bg-accent/20"]:active {
   box-shadow: inset 0 1px 2px color-mix(in srgb, var(--rr-text) 14%, transparent) !important;
   transform: translateY(1px);
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent[class*="bg-accent/20"] kbd {
-  border-color: color-mix(in srgb, var(--rr-pocket-primary-foreground) 24%, transparent) !important;
-  background: color-mix(in srgb, var(--rr-pocket-primary-foreground) 14%, transparent) !important;
-  color: var(--rr-pocket-primary-foreground) !important;
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent[class*="bg-accent/20"] kbd {
+  border-color: color-mix(in srgb, var(--rr-nauti-primary-foreground) 24%, transparent) !important;
+  background: color-mix(in srgb, var(--rr-nauti-primary-foreground) 14%, transparent) !important;
+  color: var(--rr-nauti-primary-foreground) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button.text-accent[class*="bg-accent/20"] svg {
-  color: var(--rr-pocket-primary-foreground) !important;
+html[data-rr-preset="lets-get-nauti"] body #app button.text-accent[class*="bg-accent/20"] svg {
+  color: var(--rr-nauti-primary-foreground) !important;
   opacity: 0.82 !important;
 }
 
-html[data-rr-preset="pocket"] body #app button[data-slot="button"][class*="terminal-success"] {
+html[data-rr-preset="lets-get-nauti"] body #app button[data-slot="button"][class*="terminal-success"] {
   border-color: var(--rr-border) !important;
   background: var(--rr-surface-1) !important;
   color: var(--rr-text) !important;
@@ -187,20 +187,20 @@ html[data-rr-preset="pocket"] body #app button[data-slot="button"][class*="termi
     0 1px 2px color-mix(in srgb, var(--rr-text) 10%, transparent) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button[data-slot="button"][class*="terminal-success"]:hover {
+html[data-rr-preset="lets-get-nauti"] body #app button[data-slot="button"][class*="terminal-success"]:hover {
   border-color: var(--rr-text-muted) !important;
   background: var(--rr-surface-2) !important;
   color: var(--rr-text) !important;
 }
 
-html[data-rr-preset="pocket"] body #app button[data-slot="button"][class*="terminal-success"]:active {
+html[data-rr-preset="lets-get-nauti"] body #app button[data-slot="button"][class*="terminal-success"]:active {
   box-shadow: inset 0 1px 2px color-mix(in srgb, var(--rr-text) 10%, transparent) !important;
   transform: translateY(1px);
 }
 
 /* Give the task itself a clear title, echoing Pocket's large content headings,
  * without inflating breadcrumbs, sidebar rows, or table cells. */
-html[data-rr-preset="pocket"] body #app [data-slot="card"] > [data-slot="card-content"]
+html[data-rr-preset="lets-get-nauti"] body #app [data-slot="card"] > [data-slot="card-content"]
   .flex.items-center.gap-2.text-sm.font-mono > span.truncate {
   color: var(--rr-text) !important;
   font-size: 18px !important;
@@ -210,31 +210,31 @@ html[data-rr-preset="pocket"] body #app [data-slot="card"] > [data-slot="card-co
 
 /* Table structure follows Pocket's bordered list groups. Repeated idle states
  * are neutral; red remains available for genuinely destructive UI. */
-html[data-rr-preset="pocket"] thead th {
+html[data-rr-preset="lets-get-nauti"] thead th {
   color: var(--rr-text-muted) !important;
   font-weight: 650 !important;
   letter-spacing: 0.06em !important;
 }
 
-html[data-rr-preset="pocket"] tr[data-session-id] [class*="terminal-error"] {
+html[data-rr-preset="lets-get-nauti"] tr[data-session-id] [class*="terminal-error"] {
   color: var(--rr-text-muted) !important;
 }
 
-html[data-rr-preset="pocket"] tr[data-session-id]:hover {
+html[data-rr-preset="lets-get-nauti"] tr[data-session-id]:hover {
   background: color-mix(in srgb, var(--rr-surface-2) 38%, var(--rr-surface-1)) !important;
 }
 
 /* Controls use ink rather than another brand-colored state. */
-html[data-rr-preset="pocket"] button[role="switch"][data-state="checked"] {
+html[data-rr-preset="lets-get-nauti"] button[role="switch"][data-state="checked"] {
   border-color: var(--rr-text) !important;
   background: var(--rr-text) !important;
 }
 
-html[data-rr-preset="pocket"] button[role="switch"][data-state="checked"] [data-slot="switch-thumb"] {
+html[data-rr-preset="lets-get-nauti"] button[role="switch"][data-state="checked"] [data-slot="switch-thumb"] {
   background: var(--rr-surface-1) !important;
 }
 
-html[data-rr-preset="pocket"] :is(button, input, select, textarea):focus-visible {
-  border-color: var(--rr-pocket-primary) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rr-pocket-primary) 24%, transparent) !important;
+html[data-rr-preset="lets-get-nauti"] :is(button, input, select, textarea):focus-visible {
+  border-color: var(--rr-nauti-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rr-nauti-primary) 24%, transparent) !important;
 }

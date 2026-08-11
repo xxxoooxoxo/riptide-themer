@@ -700,6 +700,23 @@ html[data-theme="nord-vscode"] [data-sidebar-task-id][data-active="true"] {
   color: var(--rr-text) !important;
 }
 
+html[data-theme="nord-vscode"] #app span.bg-sidebar-accent.tabular-nums {
+  display: inline-flex !important;
+  min-width: 20px !important;
+  height: 18px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding-inline: 6px !important;
+  border: 1px solid var(--rr-border) !important;
+  border-radius: 999px !important;
+  background: var(--rr-surface-2) !important;
+  color: var(--rr-text-muted) !important;
+  font-family: var(--rr-font-content) !important;
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+}
+
 [data-testid="task-tree-sidebar"] [data-slot="badge"] {
   min-width: 18px !important;
   border-radius: 999px !important;
