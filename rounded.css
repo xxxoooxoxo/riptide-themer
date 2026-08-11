@@ -533,34 +533,6 @@ body::-webkit-scrollbar {
   display: none !important;
 }
 
-/* Keep side panels scrollable without persistent scrollbar chrome. */
-:is(
-  [data-testid="app-shell-sidebar"],
-  [data-testid="task-tree-sidebar"],
-  [data-testid="sidebar"]
-),
-:is(
-  [data-testid="app-shell-sidebar"],
-  [data-testid="task-tree-sidebar"],
-  [data-testid="sidebar"]
-) * {
-  scrollbar-width: none !important;
-}
-
-:is(
-  [data-testid="app-shell-sidebar"],
-  [data-testid="task-tree-sidebar"],
-  [data-testid="sidebar"]
-)::-webkit-scrollbar,
-:is(
-  [data-testid="app-shell-sidebar"],
-  [data-testid="task-tree-sidebar"],
-  [data-testid="sidebar"]
-) *::-webkit-scrollbar {
-  display: none !important;
-}
-
-
 /* ===== DROPDOWNS / POPOVERS ===== */
 
 div[data-radix-popper-content-wrapper] > div,
@@ -1204,7 +1176,7 @@ div.relative.w-full.overflow-x-auto::-webkit-scrollbar {
 
 div.relative.w-full.overflow-x-auto::-webkit-scrollbar-track {
   border-radius: 999px;
-  background: color-mix(in srgb, var(--rr-border-base) 8%, transparent);
+  background: transparent;
 }
 
 div.relative.w-full.overflow-x-auto::-webkit-scrollbar-thumb {
@@ -1310,4 +1282,72 @@ html[data-theme="nord-vscode"] footer button:hover {
 #main [data-kanban-task-id] {
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
+}
+
+/* Keep every sidebar scrollbar usable in both directions. */
+:is(
+  aside,
+  [data-slot="sidebar"],
+  [data-slot="sidebar-content"],
+  [data-sidebar],
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"],
+  [data-focus-area="LEFT_NAV"],
+  [data-focus-area="RIGHT_PANE"]
+),
+:is(
+  aside,
+  [data-slot="sidebar"],
+  [data-slot="sidebar-content"],
+  [data-sidebar],
+  [data-testid="app-shell-sidebar"],
+  [data-testid="task-tree-sidebar"],
+  [data-testid="sidebar"],
+  [data-focus-area="LEFT_NAV"],
+  [data-focus-area="RIGHT_PANE"]
+) * {
+  scrollbar-width: thin !important;
+  scrollbar-color: color-mix(in srgb, var(--rr-text-faint) 30%, transparent) transparent !important;
+  scrollbar-gutter: auto !important;
+}
+
+/* WKWebView can retain the light native scroller even when the track has a
+ * transparent background. Replace its native appearance across the app, with
+ * #app-level specificity so component rules cannot restore the white track. */
+html {
+  color-scheme: dark !important;
+}
+
+:is(html, body, #app, #app *) {
+  scrollbar-color: color-mix(in srgb, var(--rr-text-faint) 30%, transparent) transparent !important;
+  scrollbar-gutter: auto !important;
+}
+
+:is(html, body, #app, #app *)::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+}
+
+:is(html, body, #app, #app *)::-webkit-scrollbar-track,
+:is(html, body, #app, #app *)::-webkit-scrollbar-track-piece,
+:is(html, body, #app, #app *)::-webkit-scrollbar-corner {
+  border: 0 !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:is(html, body, #app, #app *)::-webkit-scrollbar-thumb {
+  border: 0 !important;
+  border-radius: 999px !important;
+  -webkit-appearance: none !important;
+  background: color-mix(in srgb, var(--rr-text-faint) 30%, transparent) !important;
+  box-shadow: none !important;
+}
+
+:is(html, body, #app, #app *)::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--rr-text-faint) 50%, transparent) !important;
 }
