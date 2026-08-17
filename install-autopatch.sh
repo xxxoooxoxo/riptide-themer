@@ -1,8 +1,8 @@
 #!/bin/zsh
 set -euo pipefail
 
-# Installs the LaunchAgent that keeps /Applications/HumanLayer.app auto-injecting
-# the rounded CSS, re-applying the patch at login and after every auto-update.
+# Installs the LaunchAgent that keeps the native and Electron HumanLayer apps
+# auto-injecting the rounded CSS after login and every app update.
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 LABEL="com.riptide.rounded.autopatch"

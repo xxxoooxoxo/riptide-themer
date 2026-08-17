@@ -21,7 +21,7 @@ xcrun swiftc \
 
 cp "$ROOT/RiptideRoundedPatcher-Info.plist" "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy \
-  -c "Set :RiptidePatchScript $ROOT/patch-riptide-beta.sh" \
+  -c "Set :RiptidePatchScript $ROOT/patch-humanlayer-apps.sh" \
   "$CONTENTS/Info.plist"
 
 codesign \
