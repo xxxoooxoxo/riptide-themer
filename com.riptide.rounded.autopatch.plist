@@ -15,8 +15,8 @@
     <string>com.riptide.rounded.patcher</string>
   </array>
 
-  <!-- Re-patch at login and whenever the app bundle changes (e.g. after an
-       auto-update overwrites our LSEnvironment / signature). -->
+  <!-- Re-patch at login and whenever either app bundle changes (e.g. after an
+       auto-update overwrites the injected stylesheet or signature). -->
   <key>RunAtLoad</key>
   <true/>
 
@@ -24,6 +24,9 @@
   <array>
     <string>/Applications/HumanLayer.app/Contents/Info.plist</string>
     <string>/Applications/HumanLayer.app/Contents/MacOS/HumanLayer-Local</string>
+    <string>/Applications/HumanLayerElectron.app/Contents/Info.plist</string>
+    <string>/Applications/HumanLayerElectron.app/Contents/MacOS/HumanLayerElectron</string>
+    <string>/Applications/HumanLayerElectron.app/Contents/Resources/renderer/index.html</string>
   </array>
 
   <key>ThrottleInterval</key>
